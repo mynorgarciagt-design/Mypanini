@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Panini Tracker Pro - Single HTML</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111a32;
+      --text:#eef3ff;
+      --muted:#9fb0d0;
+      --line:rgba(255,255,255,.10);
+      --accent:#7cdbff;
+      --accent2:#9cffb1;
+      --danger:#ff7c9c;
+      --warning:#ffe27c;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --radius:18px;
+      --radius2:12px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(124,219,255,.18), transparent 28%),
+        radial-gradient(circle at 85% 5%, rgba(156,255,177,.12), transparent 30%),
+        var(--bg);
+      color:var(--text);
+    }
+    button,input,textarea,select{font:inherit}
+    button{border:0;color:inherit;background:transparent;cursor:pointer}
+    .app{max-width:1180px;margin:0 auto;padding:18px 18px calc(88px + var(--safe-bottom))}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+    .hero{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:16px;
+      align-items:stretch;
+      margin-bottom:16px;
+    }
+    .header{
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+      min-height:172px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .header:after{
+      content:"";
+      position:absolute;
+      right:-90px; top:-110px;
+      width:260px;height:260px;
+      background:radial-gradient(circle, rgba(124,219,255,.25), transparent 65%);
+      pointer-events:none;
+    }
+    .titleline{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+    h1{
+      font-size:clamp(28px, 5vw, 56px);
+      line-height:.96;
+      margin:0;
+      letter-spacing:-1.8px;
+    }
+    .statuspill{
+      flex:0 0 auto;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:800;
+    }
+    .mini{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+    .mini span{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+    }
+    .toolbar{
+      padding:16px;
+      display:grid;
+      gap:12px;
+      align-content:start;
+    }
+    .drop{
+      border:1.5px dashed rgba(124,219,255,.38);
+      border-radius:16px;
+      padding:18px;
+      color:var(--muted);
+      background:rgba(124,219,255,.055);
+      text-align:center;
+      transition:.16s ease;
+    }
+    .drop strong{
+      display:block;
+      color:var(--text);
+      font-size:15px;
+      margin-bottom:4px;
+    }
+    .drop.drag{
+      background:rgba(124,219,255,.14);
+      border-color:var(--accent);
+      color:var(--text);
+      transform:translateY(-1px);
+    }
+    .filebox{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .hidden{display:none!important}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:11px 14px;
+      border-radius:12px;
+      background:rgba(255,255,255,.075);
+      border:1px solid var(--line);
+      transition:.16s ease;
+      min-height:44px;
+      font-weight:700;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(124,219,255,.32), rgba(156,255,177,.22));
+      border-color:rgba(124,219,255,.38);
+    }
+    .btn.danger{background:rgba(255,124,156,.12);border-color:rgba(255,124,156,.25)}
+    .btn.small{padding:7px 10px;min-height:34px;font-size:13px;border-radius:10px}
+    .btn.ghost{background:transparent}
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-top:16px;
+      position:relative;
+      z-index:1;
+    }
+    .stat{
+      padding:16px;
+      background:rgba(255,255,255,.045);
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+    .stat b{display:block;font-size:28px;line-height:1;margin-bottom:7px}
+    .stat span{color:var(--muted);font-size:13px}
+    .controls{
+      position:sticky;
+      top:0;
+      z-index:20;
+      padding:10px;
+      margin-bottom:16px;
+      background:rgba(11,16,32,.78);
+      border:1px solid var(--line);
+      border-radius:18px;
+      backdrop-filter:blur(16px);
+      box-shadow:0 14px 45px rgba(0,0,0,.25);
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:rgba(255,255,255,.07);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:0 12px;
+      min-height:48px;
+    }
+    .search input{
+      width:100%;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:var(--text);
+      min-width:0;
+      font-size:16px;
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .tab{
+      padding:10px 13px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.045);
+      font-weight:800;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .tab.active{
+      color:var(--bg);
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-color:transparent;
+    }
+    .view{display:none}
+    .view.active{display:block}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    .panel{padding:18px}
+    .panel h2{margin:0 0 8px;font-size:22px;letter-spacing:-.5px}
+    .panel p{color:var(--muted);line-height:1.4;margin:0 0 12px}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+      gap:10px;
+    }
+    .sticker{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.047);
+      min-height:82px;
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:10px;
+      transition:.14s ease;
+      overflow:hidden;
+    }
+    .sticker:hover{transform:translateY(-2px);background:rgba(255,255,255,.08)}
+    .code{
+      font-weight:850;
+      font-size:20px;
+      letter-spacing:.2px;
+      word-break:break-word;
+    }
+    .meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      color:var(--muted);
+      font-size:12px
+    }
+    .badge{
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:var(--muted);
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .badge.green{background:rgba(156,255,177,.13);color:var(--accent2)}
+    .badge.red{background:rgba(255,124,156,.13);color:var(--danger)}
+    .badge.blue{background:rgba(124,219,255,.13);color:var(--accent)}
+    .empty{
+      padding:42px 18px;
+      text-align:center;
+      color:var(--muted);
+      border:1px dashed var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.025);
+    }
+    textarea{
+      width:100%;
+      min-height:140px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:12px;
+      resize:vertical;
+      outline:none;
+      font-size:16px;
+    }
+    .twoareas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label.caption{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 7px;
+      font-weight:700
+    }
+    .inputline{display:flex;gap:8px;margin:10px 0 0}
+    .inputline input{
+      flex:1;
+      min-width:0;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:rgba(255,255,255,.065);
+      color:var(--text);
+      padding:10px 12px;
+      outline:none;
+      font-size:16px;
+    }
+    .matchbox{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    .match{
+      padding:16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    .match h3{margin:0 0 10px}
+    .chips{display:flex;flex-wrap:wrap;gap:7px}
+    .chip{
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      font-weight:800;
+      font-size:13px;
+    }
+    .notice{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,226,124,.25);
+      background:rgba(255,226,124,.08);
+      color:#ffefac;
+      font-size:14px;
+      line-height:1.35;
+    }
+    .tablewrap{overflow:auto;border-radius:16px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;min-width:560px}
+    th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left}
+    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:rgba(255,255,255,.04)}
+    td{font-weight:700}
+    tr:last-child td{border-bottom:0}
+    .footer{
+      margin:22px 0 6px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+    .toast{
+      position:fixed;
+      right:16px;
+      left:16px;
+      bottom:18px;
+      margin:auto;
+      max-width:420px;
+      background:#10192f;
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      border-radius:14px;
+      padding:12px 14px;
+      transform:translateY(16px);
+      opacity:0;
+      transition:.2s ease;
+      z-index:60;
+    }
+    .toast.show{opacity:1;transform:translateY(0)}
+    .fab{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      bottom:calc(18px + var(--safe-bottom));
+      width:60px;
+      height:60px;
+      border-radius:999px;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      font-size:32px;
+      font-weight:400;
+      color:#09111d;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 18px 45px rgba(0,0,0,.35);
+      z-index:55;
+    }
+    .fab.show{display:flex}
+    .has-data #importCard{display:none}
+    .has-data .fab{display:flex}
+    .kbd{
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--line);
+      border-radius:6px;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+    }
+    .backup-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    .backup-note{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      margin-top:10px;
+    }
+    @media (max-width: 920px){
+      .hero,.row,.matchbox,.twoareas{grid-template-columns:1fr}
+      .controls{grid-template-columns:1fr}
+      .tabs{justify-content:flex-start;overflow:auto;flex-wrap:nowrap;padding-bottom:2px}
+    }
+    @media (max-width: 760px){
+      .app{padding:12px 12px calc(94px + var(--safe-bottom))}
+      .header,.toolbar,.panel{padding:14px}
+      .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .sticker{min-height:88px}
+      .controls{padding:8px;border-radius:16px}
+      .search{min-height:46px}
+      .btn{min-height:46px}
+      .btn.small{min-height:36px}
+      .filebox{display:grid;grid-template-columns:1fr 1fr}
+      .filebox .btn{width:100%}
+      .titleline{align-items:center}
+      .statuspill{font-size:11px;padding:7px 10px}
+      .mini{gap:6px}
+      .mini span{font-size:12px;padding:7px 9px}
+      table{min-width:100%}
+      .footer{padding-bottom:6px}
+    }
+    @media (max-width: 430px){
+      .grid{grid-template-columns:1fr 1fr}
+      .code{font-size:18px}
+      .filebox{grid-template-columns:1fr}
+      .tab{font-size:13px;padding:10px 12px}
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f3f6ff;--panel:#fff;--text:#10192f;--muted:#61708e;--line:rgba(17,26,50,.13);
+        --shadow:0 18px 50px rgba(35,50,90,.14);
+      }
+      body{
+        background:
+          radial-gradient(circle at 15% 0%, rgba(124,219,255,.28), transparent 28%),
+          radial-gradient(circle at 85% 5%, rgba(156,255,177,.22), transparent 30%),
+          var(--bg)
+      }
+      .controls{background:rgba(243,246,255,.78)}
+      textarea,.inputline input{background:rgba(255,255,255,.85)}
+      .toast{background:#fff}
+      .tab.active{color:#0b1020}
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="appRoot">
+    <section class="hero">
+      <div class="card header">
+        <div class="titleline">
+          <h1>Panini Tracker Pro</h1>
+          <div class="statuspill" id="deviceStatus">guardado local</div>
+        </div>
+
+        <div class="stats" aria-live="polite">
+          <div class="stat"><b id="statMissing">0</b><span>faltantes</span></div>
+          <div class="stat"><b id="statDupes">0</b><span>repetidas</span></div>
+          <div class="stat"><b id="statDupesTotal">0</b><span>total repetidas</span></div>
+          <div class="stat"><b id="statTrade">0</b><span>match</span></div>
+        </div>
+
+        <div class="mini">
+          <span>📱 móvil</span>
+          <span>💾 autosave</span>
+          <span>⚡ rápido</span>
+        </div>
+      </div>
+
+      <div class="card toolbar" id="importCard">
+        <div id="drop" class="drop">
+          <strong>Arrastrá tu Excel aquí</strong>
+          <span>o cargalo con el botón.</span>
+        </div>
+        <div class="filebox">
+          <input id="file" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
+          <button class="btn primary" id="pickFile">📥 Cargar Excel</button>
+          <button class="btn" id="exportCsv">📤 Exportar CSV</button>
+          <button class="btn danger" id="clearAll">🧹 Limpiar</button>
+        </div>
+        <div class="notice">
+          <strong>Atajos:</strong> <span class="kbd">/</span> buscar,
+          <span class="kbd">F</span> faltantes,
+          <span class="kbd">R</span> repetidas,
+          <span class="kbd">I</span> intercambio.
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="search">
+        🔎 <input id="search" placeholder="Buscar..." autocomplete="off" />
+        <button class="btn small ghost" id="clearSearch">✕</button>
+      </div>
+      <nav class="tabs" aria-label="Vistas">
+        <button class="tab active" data-tab="missing">Faltantes</button>
+        <button class="tab" data-tab="dupes">Repetidas</button>
+        <button class="tab" data-tab="trade">Intercambio</button>
+        <button class="tab" data-tab="edit">Carga rápida</button>
+        <button class="tab" data-tab="board">Resumen</button>
+      </nav>
+    </section>
+
+    <section id="view-missing" class="view active">
+      <div class="row">
+        <div class="card panel">
+          <h2>Me faltan</h2>
+          <div class="inputline">
+            <input id="newMissing" placeholder="Ej. ARG 12" />
+            <button class="btn" id="addMissing">Agregar</button>
+          </div>
+        </div>
+        <div class="card panel">
+          <h2>Acción rápida</h2>
+          <button class="btn" id="copyMissing">Copiar faltantes</button>
+        </div>
+      </div>
+      <br>
+      <div id="missingList" class="grid"></div>
+    </section>
+
+    <section id="view-dupes" class="view">
+      <div class="row">
+        <div class="card panel">
+          <h2>Tengo repetidas</h2>
+          <div class="inputline">
+            <input id="newDupe" placeholder="Ej. MEX 7" />
+            <button class="btn" id="addDupe">Agregar</button>
+          </div>
+        </div>
+        <div class="card panel">
+          <h2>Acción rápida</h2>
+          <button class="btn" id="copyDupes">Copiar repetidas</button>
+        </div>
+      </div>
+      <br>
+      <div id="dupesList" class="grid"></div>
+    </section>
+
+    <section id="view-trade" class="view">
+      <div class="card panel">
+        <h2>Modo intercambio</h2>
+        <div class="twoareas">
+          <div>
+            <label class="caption" for="otherMissing">A la otra persona le faltan</label>
+            <textarea id="otherMissing" placeholder="Pegá códigos..."></textarea>
+          </div>
+          <div>
+            <label class="caption" for="otherDupes">La otra persona tiene repetidas</label>
+            <textarea id="otherDupes" placeholder="Pegá códigos..."></textarea>
+          </div>
+        </div>
+        <div class="filebox" style="margin-top:12px">
+          <button class="btn primary" id="calcTrade">Calcular intercambio</button>
+          <button class="btn" id="copyTrade">Copiar propuesta</button>
+          <button class="btn" id="clearTrade">Limpiar</button>
+        </div>
+        <div id="tradeResults" class="matchbox"></div>
+      </div>
+    </section>
+
+    <section id="view-edit" class="view">
+      <div class="card panel">
+        <h2>Carga rápida manual</h2>
+        <div class="twoareas">
+          <div>
+            <label class="caption" for="bulkMissing">Mis faltantes</label>
+            <textarea id="bulkMissing"></textarea>
+          </div>
+          <div>
+            <label class="caption" for="bulkDupes">Mis repetidas</label>
+            <textarea id="bulkDupes"></textarea>
+          </div>
+        </div>
+        <div class="filebox" style="margin-top:12px">
+          <button class="btn primary" id="saveBulk">Guardar listas</button>
+          <button class="btn" id="mergeBulk">Sumar a lo existente</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-board" class="view">
+      <div class="card panel">
+        <h2>Resumen</h2>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Métrica</th><th>Valor</th><th>Uso</th></tr></thead>
+            <tbody id="summaryRows"></tbody>
+          </table>
+        </div>
+
+        <div class="notice" style="margin-top:14px">
+          <strong>Backup:</strong> guardá una copia cuando quieras proteger tus datos.
+        </div>
+        <div class="backup-actions">
+          <button class="btn primary" id="createBackup">💾 Crear backup</button>
+          <button class="btn" id="restoreBackup">♻️ Restaurar backup</button>
+        </div>
+        <div class="backup-note">
+          El backup es un archivo .json. Podés guardarlo en Archivos, iCloud Drive, Google Drive o enviártelo por WhatsApp.
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">
+      Tus datos quedan guardados en este navegador.
+    </p>
+  </main>
+
+  <input id="backupFile" class="hidden" type="file" accept=".json,application/json" />
+  <button class="fab" id="fabNewList" title="Nueva lista">+</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const LS_KEY = "panini_tracker_pro_v2";
+  const state = {
+    missing: new Set(),
+    dupes: new Map(),
+    activeTab: "missing",
+    search: "",
+    otherMissing: new Set(),
+    otherDupes: new Map()
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    appRoot: $("appRoot"),
+    importCard: $("importCard"),
+    file: $("file"),
+    pickFile: $("pickFile"),
+    drop: $("drop"),
+    search: $("search"),
+    clearSearch: $("clearSearch"),
+    missingList: $("missingList"),
+    dupesList: $("dupesList"),
+    statMissing: $("statMissing"),
+    statDupes: $("statDupes"),
+    statDupesTotal: $("statDupesTotal"),
+    statTrade: $("statTrade"),
+    deviceStatus: $("deviceStatus"),
+    newMissing: $("newMissing"),
+    newDupe: $("newDupe"),
+    addMissing: $("addMissing"),
+    addDupe: $("addDupe"),
+    copyMissing: $("copyMissing"),
+    copyDupes: $("copyDupes"),
+    bulkMissing: $("bulkMissing"),
+    bulkDupes: $("bulkDupes"),
+    saveBulk: $("saveBulk"),
+    mergeBulk: $("mergeBulk"),
+    otherMissing: $("otherMissing"),
+    otherDupes: $("otherDupes"),
+    calcTrade: $("calcTrade"),
+    copyTrade: $("copyTrade"),
+    clearTrade: $("clearTrade"),
+    tradeResults: $("tradeResults"),
+    exportCsv: $("exportCsv"),
+    clearAll: $("clearAll"),
+    fabNewList: $("fabNewList"),
+    toast: $("toast"),
+    summaryRows: $("summaryRows"),
+    createBackup: $("createBackup"),
+    restoreBackup: $("restoreBackup"),
+    backupFile: $("backupFile")
+  };
+
+  const debounce = (fn, wait = 80) => {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  };
+
+  function toast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add("show");
+    setTimeout(() => els.toast.classList.remove("show"), 2300);
+  }
+
+  function normalize(value) {
+    if (value === null || value === undefined) return "";
+    let s = String(value)
+      .replace(/\u00a0/g, " ")
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[–—]/g, "-")
+      .toUpperCase();
+    if (!s || s === "NULL" || s === "N/A" || s === "NA" || s === "-") return "";
+    return s;
+  }
+
+  function parseList(text) {
+    const raw = String(text || "")
+      .replace(/\r/g, "\n")
+      .split(/[\n,;|]+/)
+      .flatMap(part => {
+        const trimmed = part.trim();
+        if (!trimmed) return [];
+        const looksLikeManySimple = /^(\d+\s+){2,}\d+$/.test(trimmed);
+        return looksLikeManySimple ? trimmed.split(/\s+/) : [trimmed];
+      });
+    return raw.map(normalize).filter(Boolean);
+  }
+
+  function mapFromList(list) {
+    const map = new Map();
+    for (const code of list) map.set(code, (map.get(code) || 0) + 1);
+    return map;
+  }
+
+  function sortedCodes(iterable) {
+    return [...iterable].sort((a, b) => a.localeCompare(b, "es", {numeric:true, sensitivity:"base"}));
+  }
+
+  function filteredCodes(codes) {
+    const q = normalize(state.search);
+    if (!q) return codes;
+    return codes.filter(code => code.includes(q));
+  }
+
+  function hasData() {
+    return state.missing.size > 0 || state.dupes.size > 0;
+  }
+
+  function updateDataUI() {
+    const active = hasData();
+    els.appRoot.classList.toggle("has-data", active);
+    els.fabNewList.classList.toggle("show", active);
+  }
+
+  function save() {
+    const payload = {
+      missing: [...state.missing],
+      dupes: [...state.dupes.entries()]
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    updateDataUI();
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      state.missing = new Set((data.missing || []).map(normalize).filter(Boolean));
+      state.dupes = new Map((data.dupes || []).map(([k,v]) => [normalize(k), Math.max(1, Number(v) || 1)]).filter(([k]) => k));
+    } catch(e) {
+      console.warn(e);
+      toast("No se pudo leer el guardado anterior.");
+    }
+  }
+
+  async function createBackupFile() {
+    const payload = {
+      app: "Panini Tracker Pro",
+      version: 3,
+      createdAt: new Date().toISOString(),
+      missing: sortedCodes(state.missing),
+      dupes: sortedCodes(state.dupes.keys()).map(code => [code, state.dupes.get(code) || 1])
+    };
+
+    const prettyDate = new Date().toISOString().slice(0,10);
+    const fileName = `panini-backup-${prettyDate}.json`;
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const file = new File([blob], fileName, {type:"application/json"});
+
+    if (navigator.canShare && navigator.canShare({files:[file]})) {
+      try {
+        await navigator.share({
+          title: "Backup Panini Tracker",
+          text: "Respaldo de mi álbum Panini",
+          files: [file]
+        });
+        toast("Backup compartido.");
+        return;
+      } catch(e) {
+        if (e.name === "AbortError") return;
+      }
+    }
+
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+    toast("Backup creado.");
+  }
+
+  function restoreBackupFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!data || !Array.isArray(data.missing) || !Array.isArray(data.dupes)) {
+          toast("Ese archivo no parece ser un backup válido.");
+          return;
+        }
+
+        const ok = confirm("¿Restaurar este backup? Reemplazará la lista actual.");
+        if (!ok) return;
+
+        state.missing = new Set(data.missing.map(normalize).filter(Boolean));
+        state.dupes = new Map(
+          data.dupes
+            .map(([code, qty]) => [normalize(code), Math.max(1, Number(qty) || 1)])
+            .filter(([code]) => code)
+        );
+        save();
+        render();
+        setTab("missing");
+        toast("Backup restaurado.");
+      } catch(e) {
+        console.error(e);
+        toast("No se pudo restaurar el backup.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function exportStateCsv() {
+    const missing = sortedCodes(state.missing);
+    const dupeExpanded = [];
+    for (const code of sortedCodes(state.dupes.keys())) {
+      const qty = state.dupes.get(code) || 1;
+      for (let i = 0; i < qty; i++) dupeExpanded.push(code);
+    }
+    const max = Math.max(missing.length, dupeExpanded.length);
+    const rows = [["Faltantes", "Repetidas"]];
+    for (let i = 0; i < max; i++) rows.push([missing[i] || "", dupeExpanded[i] || ""]);
+    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], {type:"text/csv;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "panini_tracker_export.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function addMissing(code) {
+    code = normalize(code);
+    if (!code) return;
+    state.missing.add(code);
+    save();
+    render();
+  }
+
+  function removeMissing(code) {
+    state.missing.delete(code);
+    save();
+    render();
+  }
+
+  function addDupe(code, qty = 1) {
+    code = normalize(code);
+    if (!code) return;
+    state.dupes.set(code, (state.dupes.get(code) || 0) + qty);
+    save();
+    render();
+  }
+
+  function removeDupe(code, qty = 1) {
+    const current = state.dupes.get(code) || 0;
+    const next = current - qty;
+    if (next <= 0) state.dupes.delete(code);
+    else state.dupes.set(code, next);
+    save();
+    render();
+  }
+
+  function setTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+    document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === `view-${tab}`));
+    if (tab === "edit") syncBulkTextareas();
+    if (tab === "trade") renderTrade();
+    if (tab === "board") renderSummary();
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+    }[c]));
+  }
+
+  function renderStickerList(container, codes, type) {
+    container.innerHTML = "";
+    const filtered = filteredCodes(codes);
+    if (!filtered.length) {
+      container.innerHTML = `<div class="empty" style="grid-column:1/-1">No hay resultados.</div>`;
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const code of filtered) {
+      const card = document.createElement("article");
+      card.className = "sticker";
+      if (type === "missing") {
+        card.innerHTML = `
+          <div class="code">${escapeHtml(code)}</div>
+          <div class="meta">
+            <span class="badge red">Falta</span>
+            <button class="btn small" title="Marcar como conseguida">✓</button>
+          </div>`;
+        card.querySelector("button").addEventListener("click", () => {
+          removeMissing(code);
+          toast(`${code} conseguida.`);
+        });
+      } else {
+        const qty = state.dupes.get(code) || 1;
+        card.innerHTML = `
+          <div class="code">${escapeHtml(code)}</div>
+          <div class="meta">
+            <span class="badge green">x${qty}</span>
+            <span>
+              <button class="btn small" title="Restar una">−</button>
+              <button class="btn small" title="Sumar una">+</button>
+            </span>
+          </div>`;
+        const [minus, plus] = card.querySelectorAll("button");
+        minus.addEventListener("click", () => removeDupe(code));
+        plus.addEventListener("click", () => addDupe(code));
+      }
+      frag.appendChild(card);
+    }
+    container.appendChild(frag);
+  }
+
+  function renderStats() {
+    const dupeTotal = [...state.dupes.values()].reduce((a,b) => a + b, 0);
+    const tradeIn = intersection([...state.otherDupes.keys()], state.missing).length;
+    els.statMissing.textContent = state.missing.size;
+    els.statDupes.textContent = state.dupes.size;
+    els.statDupesTotal.textContent = dupeTotal;
+    els.statTrade.textContent = tradeIn;
+  }
+
+  function render() {
+    const missing = sortedCodes(state.missing);
+    const dupes = sortedCodes(state.dupes.keys());
+    renderStickerList(els.missingList, missing, "missing");
+    renderStickerList(els.dupesList, dupes, "dupe");
+    renderStats();
+    updateDataUI();
+    if (state.activeTab === "edit") syncBulkTextareas();
+    if (state.activeTab === "trade") renderTrade();
+    if (state.activeTab === "board") renderSummary();
+  }
+
+  function syncBulkTextareas() {
+    els.bulkMissing.value = sortedCodes(state.missing).join("\n");
+    const dupeExpanded = [];
+    for (const code of sortedCodes(state.dupes.keys())) {
+      const qty = state.dupes.get(code) || 1;
+      for (let i = 0; i < qty; i++) dupeExpanded.push(code);
+    }
+    els.bulkDupes.value = dupeExpanded.join("\n");
+  }
+
+  function applyBulk(mode) {
+    const missingList = parseList(els.bulkMissing.value);
+    const dupeList = parseList(els.bulkDupes.value);
+
+    if (mode === "replace") {
+      state.missing = new Set(missingList);
+      state.dupes = mapFromList(dupeList);
+      save();
+      render();
+    } else {
+      for (const code of missingList) state.missing.add(code);
+      for (const code of dupeList) state.dupes.set(code, (state.dupes.get(code) || 0) + 1);
+      save();
+      render();
+    }
+    toast(mode === "replace" ? "Listas guardadas." : "Listas sumadas.");
+  }
+
+  function readWorkbook(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:"array"});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:""});
+        importRows(rows);
+      } catch(err) {
+        console.error(err);
+        toast("No se pudo leer el archivo.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function importRows(rows) {
+    if (!rows || !rows.length) {
+      toast("El archivo está vacío.");
+      return;
+    }
+
+    const first = rows[0].map(normalize);
+    let missingCol = 0;
+    let dupesCol = 1;
+    let startRow = 0;
+
+    const missingWords = ["FALTA", "FALTAN", "FALTANTE", "FALTANTES", "NECESITO", "BUSCO", "MISSING"];
+    const dupeWords = ["REPETIDA", "REPETIDAS", "REPETIDOS", "SOBRA", "SOBRAN", "DUPLICADA", "DUPLICADAS", "DUPES"];
+
+    const looksHeader = first.some(cell => missingWords.some(w => cell.includes(w)) || dupeWords.some(w => cell.includes(w)));
+    if (looksHeader) {
+      first.forEach((cell, idx) => {
+        if (missingWords.some(w => cell.includes(w))) missingCol = idx;
+        if (dupeWords.some(w => cell.includes(w))) dupesCol = idx;
+      });
+      startRow = 1;
+    }
+
+    const missing = [];
+    const dupes = [];
+    for (let i = startRow; i < rows.length; i++) {
+      const row = rows[i] || [];
+      const m = normalize(row[missingCol]);
+      const d = normalize(row[dupesCol]);
+      if (m) missing.push(m);
+      if (d) dupes.push(d);
+    }
+
+    if (!missing.length && !dupes.length) {
+      toast("No encontré datos.");
+      return;
+    }
+
+    state.missing = new Set(missing);
+    state.dupes = mapFromList(dupes);
+    save();
+    render();
+    toast(`Importado: ${state.missing.size} faltantes y ${state.dupes.size} repetidas.`);
+  }
+
+  function intersection(list, setLike) {
+    const set = setLike instanceof Set ? setLike : new Set(setLike);
+    return sortedCodes(list.filter(code => set.has(code)));
+  }
+
+  function updateOtherListsFromTextarea() {
+    state.otherMissing = new Set(parseList(els.otherMissing.value));
+    state.otherDupes = mapFromList(parseList(els.otherDupes.value));
+  }
+
+  function renderTrade() {
+    updateOtherListsFromTextarea();
+    const iCanGive = intersection([...state.dupes.keys()], state.otherMissing);
+    const theyCanGive = intersection([...state.otherDupes.keys()], state.missing);
+    const score = Math.min(iCanGive.length, theyCanGive.length);
+    els.statTrade.textContent = theyCanGive.length;
+
+    const box = (title, codes, cls, emptyText) => `
+      <div class="match">
+        <h3>${title} <span class="badge ${cls}">${codes.length}</span></h3>
+        ${codes.length ? `<div class="chips">${codes.map(c => `<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>` : `<p>${emptyText}</p>`}
+      </div>
+    `;
+
+    els.tradeResults.innerHTML = `
+      ${box("Vos le podés dar", iCanGive, "blue", "Sin match.")}
+      ${box("La otra persona te puede dar", theyCanGive, "green", "Sin match.")}
+      <div class="match" style="grid-column:1/-1">
+        <h3>Resultado <span class="badge ${score ? "green" : "red"}">${score ? "ok" : "sin match"}</span></h3>
+        <p>${score
+            ? `Vos tenés ${iCanGive.length} que le sirven y la otra persona tiene ${theyCanGive.length} que te sirven.`
+            : "No aparece un intercambio directo con las listas pegadas."}
+        </p>
+      </div>
+    `;
+  }
+
+  function buildTradeMessage() {
+    updateOtherListsFromTextarea();
+    const iCanGive = intersection([...state.dupes.keys()], state.otherMissing);
+    const theyCanGive = intersection([...state.otherDupes.keys()], state.missing);
+
+    if (!iCanGive.length && !theyCanGive.length) {
+      return "Por ahora no encontré un intercambio directo.";
+    }
+    return [
+      "¡Tengo propuesta de intercambio Panini!",
+      "",
+      iCanGive.length ? `Yo te puedo dar: ${iCanGive.join(", ")}` : "Yo no tengo repetidas de las que te faltan.",
+      theyCanGive.length ? `A mí me servirían: ${theyCanGive.join(", ")}` : "No vi repetidas tuyas que me falten.",
+      "",
+      "¿Cuáles hacemos?"
+    ].join("\n");
+  }
+
+  function renderSummary() {
+    const missing = state.missing.size;
+    const dupeDistinct = state.dupes.size;
+    const dupeTotal = [...state.dupes.values()].reduce((a,b)=>a+b,0);
+    const overlap = intersection([...state.dupes.keys()], state.missing);
+    const topDupes = sortedCodes([...state.dupes.entries()].filter(([_,qty]) => qty > 1).map(([code]) => code)).slice(0,8);
+
+    const rows = [
+      ["Faltantes", missing, "Lo que te falta conseguir"],
+      ["Repetidas", dupeDistinct, "Códigos listos para intercambio"],
+      ["Total repetidas", dupeTotal, "Cantidad física"],
+      ["Solapadas", overlap.length, "Si aparece aquí, conviene revisar"],
+      ["Repetidas fuertes", topDupes.length ? topDupes.join(", ") : "—", "Buenas para intercambio"]
+    ];
+    els.summaryRows.innerHTML = rows.map(row => `
+      <tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td></tr>
+    `).join("");
+  }
+
+  async function copyText(text, okMsg) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(okMsg);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      toast(okMsg);
+    }
+  }
+
+  function clearAllData(ask = true) {
+    if (ask) {
+      const ok = confirm("¿Seguro que querés empezar una nueva lista? Se borrarán los datos actuales.");
+      if (!ok) return;
+    }
+    state.missing.clear();
+    state.dupes.clear();
+    state.otherMissing.clear();
+    state.otherDupes.clear();
+    els.otherMissing.value = "";
+    els.otherDupes.value = "";
+    els.bulkMissing.value = "";
+    els.bulkDupes.value = "";
+    localStorage.removeItem(LS_KEY);
+    render();
+    setTab("missing");
+    toast("Nueva lista lista para usar.");
+  }
+
+  els.pickFile.addEventListener("click", () => els.file.click());
+  els.file.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (file) readWorkbook(file);
+    els.file.value = "";
+  });
+
+  ["dragenter","dragover"].forEach(evt => {
+    els.drop.addEventListener(evt, e => {
+      e.preventDefault();
+      els.drop.classList.add("drag");
+    });
+  });
+  ["dragleave","drop"].forEach(evt => {
+    els.drop.addEventListener(evt, e => {
+      e.preventDefault();
+      els.drop.classList.remove("drag");
+    });
+  });
+  els.drop.addEventListener("drop", e => {
+    const file = e.dataTransfer.files?.[0];
+    if (file) readWorkbook(file);
+  });
+
+  document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => setTab(btn.dataset.tab)));
+
+  els.search.addEventListener("input", debounce(() => {
+    state.search = els.search.value;
+    render();
+  }, 60));
+  els.clearSearch.addEventListener("click", () => {
+    els.search.value = "";
+    state.search = "";
+    render();
+    els.search.focus();
+  });
+
+  els.addMissing.addEventListener("click", () => {
+    addMissing(els.newMissing.value);
+    els.newMissing.value = "";
+    els.newMissing.focus();
+  });
+  els.addDupe.addEventListener("click", () => {
+    addDupe(els.newDupe.value);
+    els.newDupe.value = "";
+    els.newDupe.focus();
+  });
+  els.newMissing.addEventListener("keydown", e => {
+    if (e.key === "Enter") els.addMissing.click();
+  });
+  els.newDupe.addEventListener("keydown", e => {
+    if (e.key === "Enter") els.addDupe.click();
+  });
+
+  els.copyMissing.addEventListener("click", () => copyText(sortedCodes(state.missing).join(", "), "Faltantes copiados."));
+  els.copyDupes.addEventListener("click", () => {
+    const arr = [];
+    for (const code of sortedCodes(state.dupes.keys())) {
+      const qty = state.dupes.get(code) || 1;
+      arr.push(qty > 1 ? `${code} x${qty}` : code);
+    }
+    copyText(arr.join(", "), "Repetidas copiadas.");
+  });
+
+  els.saveBulk.addEventListener("click", () => applyBulk("replace"));
+  els.mergeBulk.addEventListener("click", () => applyBulk("merge"));
+
+  els.calcTrade.addEventListener("click", () => {
+    renderTrade();
+    toast("Intercambio calculado.");
+  });
+  [els.otherMissing, els.otherDupes].forEach(ta => ta.addEventListener("input", debounce(renderTrade, 120)));
+  els.copyTrade.addEventListener("click", () => copyText(buildTradeMessage(), "Propuesta copiada."));
+  els.clearTrade.addEventListener("click", () => {
+    els.otherMissing.value = "";
+    els.otherDupes.value = "";
+    renderTrade();
+  });
+
+  els.exportCsv.addEventListener("click", exportStateCsv);
+  els.clearAll.addEventListener("click", () => clearAllData(true));
+  els.fabNewList.addEventListener("click", () => clearAllData(true));
+
+  window.addEventListener("keydown", (e) => {
+    const tag = document.activeElement?.tagName?.toLowerCase();
+    const typing = ["input","textarea"].includes(tag);
+    if (e.key === "/" && !typing) {
+      e.preventDefault();
+      els.search.focus();
+    }
+    if (typing) return;
+    const key = e.key.toLowerCase();
+    if (key === "f") setTab("missing");
+    if (key === "r") setTab("dupes");
+    if (key === "i") setTab("trade");
+  });
+
+  els.createBackup.addEventListener("click", createBackupFile);
+  els.restoreBackup.addEventListener("click", () => els.backupFile.click());
+  els.backupFile.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (file) restoreBackupFile(file);
+    els.backupFile.value = "";
+  });
+
+  load();
+  render();
+  els.deviceStatus.textContent = "guardado local";
+})();
+</script>
+</body>
+</html>
