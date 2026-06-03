@@ -3,815 +3,272 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Panini Tracker Pro - Solid UI</title>
+  <title>Panini Tracker Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#111a32;
-      --text:#eef3ff;
-      --muted:#9fb0d0;
-      --line:rgba(255,255,255,.10);
-      --accent:#7cdbff;
-      --accent2:#9cffb1;
-      --danger:#ff7c9c;
-      --warning:#ffe27c;
-      --shadow:0 18px 50px rgba(0,0,0,.35);
-      --radius:18px;
-      --radius2:12px;
+    :root {
+      --bg:#ffffff;
+      --text:#070b14;
+      --muted:#7a8494;
+      --muted2:#a7b0bf;
+      --soft:#f3f6fa;
+      --line:#e5eaf1;
+      --blue:#2563eb;
+      --cream:#fff1d4;
+      --creamText:#ad7000;
+      --owned:#e8f8ee;
+      --ownedText:#087a39;
+      --dupe:#748092;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
     }
-    button,input,textarea,select{font:inherit}
-    button{border:0;color:inherit;background:transparent;cursor:pointer}
-    .app{max-width:1180px;margin:0 auto;padding:18px 18px calc(88px + var(--safe-bottom))}
-    .card{
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(12px);
+    button,input,textarea{font:inherit}
+    button{border:0;background:transparent;color:inherit;cursor:pointer}
+    .hidden{display:none!important}
+    .app{
+      max-width:900px;
+      margin:0 auto;
+      padding:18px 18px calc(96px + var(--safe-bottom));
     }
-    .hero{
-      display:grid;
-      grid-template-columns:1.15fr .85fr;
-      gap:16px;
-      align-items:stretch;
-      margin-bottom:16px;
-    }
-    .header{
-      padding:22px;
-      position:relative;
-      overflow:hidden;
-      min-height:172px;
+    .topbar{
       display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-    .header:after{
-      content:"";
-      position:absolute;
-      right:-90px; top:-110px;
-      width:260px;height:260px;
-      display:none;
-      background:transparent;
-      pointer-events:none;
-    }
-    .titleline{
-      display:flex;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
       gap:12px;
-      position:relative;
-      z-index:1;
+      padding:8px 0 14px;
     }
     h1{
-      font-size:clamp(28px, 5vw, 56px);
-      line-height:.96;
       margin:0;
-      letter-spacing:-1.8px;
+      font-size:clamp(30px,7.3vw,44px);
+      line-height:1.02;
+      letter-spacing:-.055em;
+      font-weight:950;
     }
-    .statuspill{
-      flex:0 0 auto;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      color:var(--muted);
-      background:rgba(255,255,255,.06);
-      font-size:12px;
-      font-weight:800;
+    .top-actions{display:flex;gap:8px}
+    .iconbtn{
+      width:46px;height:46px;border-radius:17px;
+      background:var(--soft);
+      display:flex;align-items:center;justify-content:center;
+      font-size:25px;font-weight:950;
     }
-    .mini{
-      position:relative;
-      z-index:1;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:12px;
-      color:var(--muted);
-      font-size:13px;
-      font-weight:700;
-    }
-    .mini span{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-    }
-    .toolbar{
-      padding:16px;
+    .tabs{
       display:grid;
-      gap:12px;
-      align-content:start;
+      grid-template-columns:repeat(6,1fr);
+      border-bottom:1px solid var(--line);
+      margin:0 -4px 10px;
+      gap:0;
+    }
+    .tab{
+      position:relative;
+      padding:10px 2px 13px;
+      color:#697386;
+      font-size:clamp(11px,3.25vw,17px);
+      font-weight:950;
+      letter-spacing:-.02em;
+      text-align:center;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tab.active{color:var(--text)}
+    .tab.active:after{
+      content:"";
+      position:absolute;
+      left:14%;right:14%;bottom:-1px;
+      height:4px;border-radius:999px 999px 0 0;
+      background:var(--blue);
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:9px;
+      margin:14px 0;
+    }
+    .stat{
+      background:var(--soft);
+      border-radius:20px;
+      padding:12px 10px;
+      min-height:70px;
+    }
+    .stat b{
+      display:block;
+      font-size:24px;
+      line-height:1;
+      font-weight:950;
+      letter-spacing:-.04em;
+    }
+    .stat span{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:850;
+      display:block;
+      margin-top:6px;
+      line-height:1.05;
+    }
+    .import-card{
+      background:var(--soft);
+      border-radius:24px;
+      padding:14px;
+      margin:12px 0 14px;
     }
     .drop{
-      border:1.5px dashed rgba(124,219,255,.38);
-      border-radius:16px;
-      padding:18px;
+      border:2px dashed #c9d2df;
+      background:#fff;
       color:var(--muted);
-      background:rgba(124,219,255,.055);
+      border-radius:20px;
+      padding:14px;
       text-align:center;
-      transition:.16s ease;
+      font-weight:800;
     }
     .drop strong{
       display:block;
       color:var(--text);
-      font-size:15px;
-      margin-bottom:4px;
+      font-size:17px;
+      font-weight:950;
+      margin-bottom:3px;
     }
-    .drop.drag{
-      background:rgba(124,219,255,.14);
-      border-color:var(--accent);
-      color:var(--text);
-      transform:translateY(-1px);
-    }
-    .filebox{
+    .drop.drag{border-color:var(--blue);background:#eaf1ff;color:var(--text)}
+    .btnrow{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
-      align-items:center;
+      gap:9px;
+      margin-top:10px;
     }
-    .hidden{display:none!important}
     .btn{
+      min-height:46px;
+      padding:11px 14px;
+      border-radius:17px;
+      background:var(--soft);
+      color:var(--text);
+      font-weight:950;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      padding:11px 14px;
-      border-radius:12px;
-      background:rgba(255,255,255,.075);
-      border:1px solid var(--line);
-      transition:.16s ease;
-      min-height:44px;
-      font-weight:700;
+      gap:7px;
     }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
-    .btn.primary{
-      background:rgba(124,219,255,.20);
-      border-color:rgba(124,219,255,.38);
+    .btn.primary{background:var(--blue);color:#fff}
+    .btn.danger{background:#fff0f3;color:#c72049}
+    .btn.small{
+      min-height:32px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:13px;
     }
-    .btn.danger{background:rgba(255,124,156,.12);border-color:rgba(255,124,156,.25)}
-    .btn.small{padding:7px 10px;min-height:34px;font-size:13px;border-radius:10px}
-    .btn.ghost{background:transparent}
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-top:16px;
-      position:relative;
-      z-index:1;
-    }
-    .stat{
-      padding:16px;
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line);
-      border-radius:16px;
-    }
-    .stat b{display:block;font-size:28px;line-height:1;margin-bottom:7px}
-    .stat span{color:var(--muted);font-size:13px}
     .controls{
       position:sticky;
       top:0;
       z-index:20;
-      padding:10px;
-      margin-bottom:16px;
-      background:rgba(11,16,32,.78);
-      border:1px solid var(--line);
-      border-radius:18px;
-      backdrop-filter:blur(16px);
-      box-shadow:0 14px 45px rgba(0,0,0,.25);
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      align-items:center;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(18px);
+      padding:10px 0;
+      margin-bottom:6px;
     }
     .search{
       display:flex;
       align-items:center;
       gap:10px;
-      background:rgba(255,255,255,.07);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:0 12px;
-      min-height:48px;
+      min-height:56px;
+      background:var(--soft);
+      border-radius:22px;
+      padding:0 14px;
+      color:#778294;
     }
+    .search .mag{font-size:23px}
     .search input{
       width:100%;
+      border:0;outline:0;
       background:transparent;
-      border:0;
-      outline:0;
       color:var(--text);
       min-width:0;
-      font-size:16px;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:-.03em;
     }
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .tab{
-      padding:10px 13px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      color:var(--muted);
-      background:rgba(255,255,255,.045);
-      font-weight:800;
-      font-size:14px;
-      white-space:nowrap;
-    }
-    .tab.active{
-      color:var(--bg);
-      background:var(--accent);
-      border-color:transparent;
-    }
+    .search input::placeholder{color:#7d8796}
     .view{display:none}
     .view.active{display:block}
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:16px;
-      align-items:start;
+    .section{
+      border-bottom:1px solid var(--line);
+      padding:18px 0 20px;
     }
-    .panel{padding:18px}
-    .panel h2{margin:0 0 8px;font-size:22px;letter-spacing:-.5px}
-    .panel p{color:var(--muted);line-height:1.4;margin:0 0 12px}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
-      gap:10px;
-    }
-    .sticker{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:rgba(255,255,255,.047);
-      min-height:82px;
-      padding:12px;
+    .section:last-child{border-bottom:0}
+    .section-head{
       display:flex;
-      flex-direction:column;
+      align-items:baseline;
       justify-content:space-between;
       gap:10px;
-      transition:.14s ease;
-      overflow:hidden;
+      margin-bottom:12px;
     }
-    .sticker:hover{transform:translateY(-2px);background:rgba(255,255,255,.08)}
-    .code{
-      font-weight:850;
-      font-size:20px;
-      letter-spacing:.2px;
-      word-break:break-word;
+    .section-title{
+      margin:0;
+      font-size:clamp(25px,7vw,38px);
+      line-height:1.05;
+      letter-spacing:-.055em;
+      font-weight:950;
     }
-    .meta{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
+    .section-count{
       color:var(--muted);
-      font-size:12px
-    }
-    .badge{
-      padding:4px 8px;
-      border-radius:999px;
-      background:rgba(255,255,255,.08);
-      color:var(--muted);
-      font-weight:800;
+      font-size:13px;
+      font-weight:900;
       white-space:nowrap;
     }
-    .badge.green{background:rgba(156,255,177,.13);color:var(--accent2)}
-    .badge.red{background:rgba(255,124,156,.13);color:var(--danger)}
-    .badge.blue{background:rgba(124,219,255,.13);color:var(--accent)}
-    .empty{
-      padding:42px 18px;
-      text-align:center;
-      color:var(--muted);
-      border:1px dashed var(--line);
-      border-radius:18px;
-      background:rgba(255,255,255,.025);
-    }
-    textarea{
-      width:100%;
-      min-height:140px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      padding:12px;
-      resize:vertical;
-      outline:none;
-      font-size:16px;
-    }
-    .twoareas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    label.caption{
-      display:block;
-      color:var(--muted);
-      font-size:13px;
-      margin:0 0 7px;
-      font-weight:700
-    }
-    .inputline{display:flex;gap:8px;margin:10px 0 0}
-    .inputline input{
-      flex:1;
-      min-width:0;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:rgba(255,255,255,.065);
-      color:var(--text);
-      padding:10px 12px;
-      outline:none;
-      font-size:16px;
-    }
-    .matchbox{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-      margin-top:14px;
-    }
-    .match{
-      padding:16px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-    }
-    .match h3{margin:0 0 10px}
-    .chips{display:flex;flex-wrap:wrap;gap:7px}
-    .chip{
-      padding:7px 9px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      font-weight:800;
-      font-size:13px;
-    }
-    .notice{
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,226,124,.25);
-      background:rgba(255,226,124,.08);
-      color:#ffefac;
-      font-size:14px;
-      line-height:1.35;
-    }
-    .tablewrap{overflow:auto;border-radius:16px;border:1px solid var(--line)}
-    table{width:100%;border-collapse:collapse;min-width:560px}
-    th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left}
-    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:rgba(255,255,255,.04)}
-    td{font-weight:700}
-    tr:last-child td{border-bottom:0}
-    .footer{
-      margin:22px 0 6px;
-      color:var(--muted);
-      font-size:13px;
-      text-align:center;
-    }
-    .toast{
-      position:fixed;
-      right:16px;
-      left:16px;
-      bottom:18px;
-      margin:auto;
-      max-width:420px;
-      background:#10192f;
-      color:var(--text);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      border-radius:14px;
-      padding:12px 14px;
-      transform:translateY(16px);
-      opacity:0;
-      transition:.2s ease;
-      z-index:60;
-    }
-    .toast.show{opacity:1;transform:translateY(0)}
-    .fab{
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      bottom:calc(18px + var(--safe-bottom));
-      width:60px;
-      height:60px;
-      border-radius:999px;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      font-size:32px;
-      font-weight:400;
-      color:#09111d;
-      background:var(--accent);
-      box-shadow:0 18px 45px rgba(0,0,0,.35);
-      z-index:55;
-    }
-    .fab.show{display:flex}
-    .has-data #importCard{display:none}
-    .has-data .fab{display:flex}
-    .kbd{
-      font-size:12px;
-      padding:2px 6px;
-      border:1px solid var(--line);
-      border-radius:6px;
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-    }
-    .backup-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:14px;
-    }
-    .backup-note{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-      margin-top:10px;
-    }
-    @media (max-width: 920px){
-      .hero,.row,.matchbox,.twoareas{grid-template-columns:1fr}
-      .controls{grid-template-columns:1fr}
-      .tabs{justify-content:flex-start;overflow:auto;flex-wrap:nowrap;padding-bottom:2px}
-    }
-    @media (max-width: 760px){
-      .app{padding:12px 12px calc(94px + var(--safe-bottom))}
-      .header,.toolbar,.panel{padding:14px}
-      .stats{grid-template-columns:repeat(2,1fr);gap:10px}
-      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .sticker{min-height:88px}
-      .controls{padding:8px;border-radius:16px}
-      .search{min-height:46px}
-      .btn{min-height:46px}
-      .btn.small{min-height:36px}
-      .filebox{display:grid;grid-template-columns:1fr 1fr}
-      .filebox .btn{width:100%}
-      .titleline{align-items:center}
-      .statuspill{font-size:11px;padding:7px 10px}
-      .mini{gap:6px}
-      .mini span{font-size:12px;padding:7px 9px}
-      table{min-width:100%}
-      .footer{padding-bottom:6px}
-    }
-    @media (max-width: 430px){
-      .grid{grid-template-columns:1fr 1fr}
-      .code{font-size:18px}
-      .filebox{grid-template-columns:1fr}
-      .tab{font-size:13px;padding:10px 12px}
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f3f6ff;--panel:#fff;--text:#10192f;--muted:#61708e;--line:rgba(17,26,50,.13);
-        --shadow:0 18px 50px rgba(35,50,90,.14);
-      }
-      body{
-        background:var(--bg)
-      }
-      .controls{background:rgba(243,246,255,.78)}
-      textarea,.inputline input{background:rgba(255,255,255,.85)}
-      .toast{background:#fff}
-      .tab.active{color:#0b1020}
-    }
-  </style>
-
-  <style id="app-look-v5">
-    :root{
-      --bg:#ffffff;
-      --surface:#ffffff;
-      --soft:#f4f6fa;
-      --soft2:#eef2f7;
-      --text:#080b12;
-      --muted:#778294;
-      --muted2:#a4adbb;
-      --line:#e4e9f1;
-      --blue:#2563eb;
-      --blueSoft:#eaf1ff;
-      --cream:#fff1d4;
-      --creamText:#b87800;
-      --dupe:#748092;
-      --danger:#ef476f;
-      --green:#18a957;
-      --shadow:0 10px 28px rgba(15,23,42,.08);
-      --safe-bottom:env(safe-area-inset-bottom, 0px);
-    }
-
-    body{
-      background:#fff!important;
-      color:var(--text)!important;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif!important;
-    }
-
-    .app{
-      max-width:860px;
-      padding:18px 22px calc(100px + var(--safe-bottom))!important;
-      background:#fff!important;
-    }
-
-    .hero{
-      display:block!important;
-      margin:0!important;
-    }
-
-    .card,
-    .header,
-    .toolbar,
     .panel{
-      background:#fff!important;
-      box-shadow:none!important;
-      border:0!important;
-      backdrop-filter:none!important;
+      padding:14px 0 18px;
     }
-
-    .header{
-      padding:8px 0 0!important;
-      min-height:auto!important;
-      display:block!important;
-      overflow:visible!important;
-    }
-
-    .header:after{display:none!important}
-
-    .titleline{
-      display:flex!important;
-      align-items:center!important;
-      justify-content:space-between!important;
-      gap:12px!important;
-    }
-
-    h1{
-      font-size:clamp(30px,7vw,42px)!important;
-      letter-spacing:-.05em!important;
-      font-weight:950!important;
-      color:var(--text)!important;
-      margin:0!important;
-      line-height:1.05!important;
-    }
-
-    .top-upload{
-      width:46px;
-      height:46px;
-      border-radius:16px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      background:var(--soft);
-      font-size:26px;
-      font-weight:950;
-      color:var(--text);
-    }
-
-    .statuspill,
-    .mini{
-      display:none!important;
-    }
-
-    .stats{
-      grid-template-columns:repeat(4,1fr)!important;
-      gap:10px!important;
-      margin:18px 0 10px!important;
-    }
-
-    .stat{
-      background:var(--soft)!important;
-      border:0!important;
-      border-radius:22px!important;
-      padding:14px 12px!important;
-      min-height:78px!important;
-    }
-
-    .stat b{
-      color:var(--text)!important;
-      font-size:28px!important;
-      font-weight:950!important;
-      letter-spacing:-.04em!important;
-    }
-
-    .stat span{
-      color:var(--muted)!important;
-      font-size:12px!important;
-      font-weight:850!important;
-    }
-
-    .toolbar{
-      background:var(--soft)!important;
-      border-radius:28px!important;
-      padding:18px!important;
-      margin:16px 0!important;
-    }
-
-    .drop{
-      background:#fff!important;
-      border:2px dashed #c9d2df!important;
-      border-radius:24px!important;
-      color:var(--muted)!important;
-      padding:18px!important;
-    }
-
-    .drop strong{
-      color:var(--text)!important;
-      font-size:18px!important;
-      font-weight:950!important;
-    }
-
-    .btn{
-      border:0!important;
-      border-radius:18px!important;
-      background:var(--soft)!important;
-      color:var(--text)!important;
-      min-height:48px!important;
-      font-weight:900!important;
-      box-shadow:none!important;
-    }
-
-    .btn.primary{
-      background:var(--blue)!important;
-      color:#fff!important;
-    }
-
-    .btn.danger{
-      background:#fff0f3!important;
-      color:#c72049!important;
-    }
-
-    .btn.small{
-      min-height:34px!important;
-      border-radius:999px!important;
-      padding:6px 10px!important;
-      font-size:14px!important;
-    }
-
-    .controls{
-      position:sticky!important;
-      top:0!important;
-      background:rgba(255,255,255,.96)!important;
-      border:0!important;
-      box-shadow:none!important;
-      backdrop-filter:blur(18px)!important;
-      padding:12px 0 10px!important;
-      margin-bottom:12px!important;
-      display:grid!important;
-      grid-template-columns:1fr 52px!important;
-      gap:14px!important;
-    }
-
-    .search{
-      background:var(--soft)!important;
-      border:0!important;
-      border-radius:28px!important;
-      min-height:64px!important;
-      padding:0 18px!important;
-      color:var(--muted)!important;
-    }
-
-    .search input{
-      color:var(--text)!important;
-      font-size:26px!important;
-      font-weight:900!important;
-      letter-spacing:-.035em!important;
-    }
-
-    .search input::placeholder{color:#7c8595!important}
-
-    .search::before{
-      content:"⌕";
-      font-size:42px;
-      line-height:1;
-      color:#778294;
-      margin-right:2px;
-      transform:translateY(-1px);
-    }
-
-    .search > :first-child{
-      display:none!important;
-    }
-
-    #clearSearch{
-      color:#778294!important;
-      background:transparent!important;
-      min-height:36px!important;
-      width:36px!important;
-      padding:0!important;
-    }
-
-    .tabs{
-      display:grid!important;
-      grid-template-columns:repeat(5,max-content)!important;
-      gap:34px!important;
-      overflow-x:auto!important;
-      scrollbar-width:none!important;
-      padding:8px 0 0!important;
-      margin:0!important;
-      border-bottom:1px solid var(--line)!important;
-      justify-content:start!important;
-    }
-
-    .tabs::-webkit-scrollbar{display:none!important}
-
-    .tab{
-      position:relative!important;
-      background:transparent!important;
-      border:0!important;
-      border-radius:0!important;
-      padding:10px 0 16px!important;
-      color:#6f7786!important;
-      font-size:clamp(20px,5.5vw,30px)!important;
-      font-weight:950!important;
-      letter-spacing:-.04em!important;
-      white-space:nowrap!important;
-    }
-
-    .tab.active{
-      color:var(--text)!important;
-      background:transparent!important;
-    }
-
-    .tab.active:after{
-      content:"";
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:-1px;
-      height:6px;
-      border-radius:999px 999px 0 0;
-      background:var(--blue);
-    }
-
-    .view{display:none!important}
-    .view.active{display:block!important}
-
-    .row{
-      display:grid!important;
-      grid-template-columns:1fr!important;
-      gap:0!important;
-    }
-
-    .panel{
-      padding:16px 0!important;
-      margin:0!important;
-    }
-
     .panel h2{
-      margin:0 0 16px!important;
-      font-size:clamp(32px,7vw,46px)!important;
-      line-height:1.05!important;
-      letter-spacing:-.055em!important;
-      font-weight:950!important;
-      color:var(--text)!important;
+      margin:0 0 12px;
+      font-size:clamp(30px,8vw,42px);
+      line-height:1.05;
+      letter-spacing:-.055em;
+      font-weight:950;
     }
-
-    .panel p{
-      display:none!important;
-    }
-
     .inputline{
-      display:grid!important;
-      grid-template-columns:1fr auto!important;
-      gap:10px!important;
-      margin:0 0 14px!important;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:9px;
+      margin:8px 0 10px;
     }
-
     .inputline input{
-      min-height:52px!important;
-      border:0!important;
-      outline:0!important;
-      border-radius:20px!important;
-      background:var(--soft)!important;
-      color:var(--text)!important;
-      padding:0 16px!important;
-      font-size:18px!important;
-      font-weight:850!important;
-      min-width:0!important;
+      border:0;outline:0;
+      min-height:50px;
+      border-radius:18px;
+      background:var(--soft);
+      color:var(--text);
+      padding:0 14px;
+      font-size:17px;
+      font-weight:850;
+      min-width:0;
     }
-
     .grid{
-      grid-template-columns:repeat(auto-fill,minmax(92px,1fr))!important;
-      gap:24px 18px!important;
-      align-items:start!important;
-      padding:0 0 22px!important;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(74px,1fr));
+      gap:15px 12px;
+      align-items:start;
     }
-
     .sticker{
-      position:relative!important;
-      min-height:96px!important;
-      padding:10px!important;
-      display:flex!important;
-      align-items:center!important;
-      justify-content:center!important;
-      background:transparent!important;
-      border:0!important;
-      border-radius:0!important;
-      overflow:visible!important;
-      box-shadow:none!important;
+      position:relative;
+      min-height:76px;
+      padding:5px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:manipulation;
     }
-
-    .sticker:hover{transform:none!important;background:transparent!important}
-    .sticker:active{transform:scale(.96)!important}
-
-    .sticker::before{
+    .sticker:active{transform:scale(.97)}
+    .sticker:before{
       content:"";
       position:absolute;
-      inset:4px;
+      inset:2px;
+      z-index:0;
       background:var(--cream);
       clip-path:polygon(
         50% 0%,57% 7%,66% 3%,72% 12%,82% 10%,86% 20%,96% 24%,
@@ -820,660 +277,302 @@
         17% 80%,7% 75%,10% 64%,1% 56%,7% 47%,2% 36%,12% 30%,
         13% 19%,24% 16%,30% 7%,40% 9%
       );
-      z-index:0;
     }
-
-    #dupesList .sticker::before{background:var(--dupe)!important}
-
+    .sticker.owned:before{background:var(--owned)}
+    .sticker.dupe:before{background:var(--dupe)}
     .code{
-      position:relative!important;
-      z-index:1!important;
-      color:var(--creamText)!important;
-      font-size:28px!important;
-      font-weight:950!important;
-      letter-spacing:-.04em!important;
-      text-align:center!important;
-      line-height:1!important;
-      max-width:92px!important;
+      position:relative;
+      z-index:1;
+      color:var(--creamText);
+      font-size:clamp(16px,4.9vw,21px);
+      line-height:.95;
+      font-weight:950;
+      letter-spacing:-.035em;
+      text-align:center;
+      max-width:64px;
+      word-break:break-word;
     }
-
-    #dupesList .code{
-      color:#fff!important;
+    .sticker.owned .code{color:var(--ownedText)}
+    .sticker.dupe .code{
+      color:#fff;
       text-decoration:line-through;
-      text-decoration-thickness:3px;
-      text-decoration-color:rgba(255,255,255,.8);
+      text-decoration-thickness:2.5px;
+      text-decoration-color:rgba(255,255,255,.85);
     }
-
-    .meta{
-      position:absolute!important;
-      top:2px!important;
-      right:0!important;
-      z-index:2!important;
-      display:flex!important;
-      gap:4px!important;
-      align-items:center!important;
-      justify-content:center!important;
+    .qty-badge{
+      position:absolute;
+      z-index:2;
+      top:-5px;
+      right:-5px;
+      min-width:26px;
+      height:26px;
+      padding:0 7px;
+      border-radius:999px;
+      background:var(--blue);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      font-weight:950;
+      box-shadow:0 4px 10px rgba(37,99,235,.22);
     }
-
-    .badge{
-      min-width:34px!important;
-      height:34px!important;
-      padding:0 8px!important;
-      display:inline-flex!important;
-      align-items:center!important;
-      justify-content:center!important;
-      border-radius:999px!important;
-      background:var(--blue)!important;
-      color:#fff!important;
-      font-size:18px!important;
-      font-weight:950!important;
-      box-shadow:0 4px 10px rgba(37,99,235,.28)!important;
+    .tap-hint{
+      color:var(--muted);
+      font-size:13px;
+      font-weight:850;
+      margin:-2px 0 12px;
+      line-height:1.25;
     }
-
-    .sticker .btn.small{
-      width:34px!important;
-      height:34px!important;
-      min-height:34px!important;
-      padding:0!important;
-      border-radius:999px!important;
-      background:var(--blue)!important;
-      color:#fff!important;
-      font-size:20px!important;
-      box-shadow:0 4px 10px rgba(37,99,235,.28)!important;
-    }
-
     .empty{
-      grid-column:1/-1!important;
-      background:var(--soft)!important;
-      border:0!important;
-      border-radius:28px!important;
-      color:var(--muted)!important;
-      font-size:18px!important;
-      font-weight:850!important;
+      grid-column:1/-1;
+      background:var(--soft);
+      color:var(--muted);
+      border-radius:22px;
+      padding:28px 14px;
+      text-align:center;
+      font-size:16px;
+      font-weight:850;
     }
-
     textarea{
-      background:var(--soft)!important;
-      border:0!important;
-      border-radius:24px!important;
-      color:var(--text)!important;
-      font-size:17px!important;
-      font-weight:750!important;
-      padding:16px!important;
+      width:100%;
+      min-height:140px;
+      border:0;outline:0;
+      border-radius:22px;
+      background:var(--soft);
+      color:var(--text);
+      padding:14px;
+      resize:vertical;
+      font-size:16px;
+      font-weight:750;
     }
-
     label.caption{
-      color:var(--muted)!important;
-      font-size:15px!important;
-      font-weight:900!important;
+      display:block;
+      color:var(--muted);
+      font-size:14px;
+      font-weight:900;
+      margin:0 0 7px;
     }
-
-    .twoareas,
+    .twoareas{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
     .matchbox{
-      gap:14px!important;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:12px;
     }
-
     .match{
-      background:var(--soft)!important;
-      border:0!important;
-      border-radius:24px!important;
+      background:var(--soft);
+      border-radius:22px;
+      padding:14px;
     }
-
-    .chips{gap:8px!important}
-
+    .match h3{margin:0 0 10px;font-size:19px;letter-spacing:-.03em}
+    .match p{margin:0;color:var(--muted);font-weight:800;line-height:1.35}
+    .chips{display:flex;flex-wrap:wrap;gap:7px}
     .chip{
-      background:#fff!important;
-      color:var(--text)!important;
-      border:0!important;
-      border-radius:999px!important;
-      padding:8px 11px!important;
-      font-weight:950!important;
+      background:#fff;
+      border-radius:999px;
+      padding:7px 10px;
+      font-weight:950;
     }
-
     .notice{
-      background:var(--blueSoft)!important;
-      color:#1e4fc4!important;
-      border:0!important;
-      border-radius:22px!important;
-      font-weight:800!important;
+      background:#eaf1ff;
+      color:#1e4fc4;
+      border-radius:20px;
+      padding:13px 14px;
+      font-size:14px;
+      line-height:1.35;
+      font-weight:800;
+      margin-top:12px;
     }
-
     .tablewrap{
-      border:0!important;
-      border-radius:24px!important;
-      background:var(--soft)!important;
+      overflow:auto;
+      border-radius:22px;
+      background:var(--soft);
     }
-
-    th{
-      color:var(--muted)!important;
-      background:transparent!important;
-      font-weight:950!important;
-    }
-
-    td{font-weight:900!important}
-
-    .footer{
-      color:var(--muted2)!important;
-      font-weight:750!important;
-      padding-bottom:8px!important;
-    }
-
+    table{width:100%;border-collapse:collapse;min-width:560px}
+    th,td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left}
+    th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:950}
+    td{font-weight:900}
+    tr:last-child td{border-bottom:0}
     .bottomnav{
       position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
+      left:0;right:0;bottom:0;
       z-index:40;
+      max-width:900px;
+      margin:0 auto;
       background:rgba(255,255,255,.96);
       backdrop-filter:blur(18px);
       border-top:1px solid var(--line);
-      padding:8px 10px calc(8px + var(--safe-bottom));
       display:grid;
       grid-template-columns:repeat(4,1fr);
-      gap:4px;
-      max-width:860px;
-      margin:0 auto;
+      gap:3px;
+      padding:7px 8px calc(7px + var(--safe-bottom));
     }
-
     .navitem{
-      min-height:62px;
+      min-height:56px;
       border-radius:18px;
-      color:#9aa4b3;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:4px;
+      gap:3px;
+      color:#99a3b2;
+      font-size:11px;
       font-weight:950;
-      font-size:12px;
     }
-
-    .navitem span{
-      font-size:28px;
-      line-height:1;
-    }
-
-    .navitem strong{
-      font-size:13px;
-      line-height:1;
-    }
-
+    .navitem span{font-size:23px;line-height:1}
     .navitem.active{color:var(--blue)}
-
     .fab{
-      bottom:calc(92px + var(--safe-bottom))!important;
-      background:var(--blue)!important;
-      color:#fff!important;
-      box-shadow:0 14px 28px rgba(37,99,235,.28)!important;
+      position:fixed;
+      right:18px;
+      bottom:calc(86px + var(--safe-bottom));
+      z-index:45;
+      width:56px;height:56px;border-radius:999px;
+      background:var(--blue);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+      font-weight:700;
+      box-shadow:0 14px 28px rgba(37,99,235,.25);
     }
-
     .toast{
-      bottom:calc(92px + var(--safe-bottom))!important;
-      background:#111827!important;
-      color:#fff!important;
-      border-radius:18px!important;
-      font-weight:800!important;
+      position:fixed;
+      left:16px;right:16px;
+      bottom:calc(88px + var(--safe-bottom));
+      z-index:60;
+      max-width:420px;
+      margin:auto;
+      background:#111827;
+      color:#fff;
+      border-radius:18px;
+      padding:13px 15px;
+      opacity:0;
+      transform:translateY(14px);
+      transition:.18s ease;
+      font-weight:800;
     }
-
-    @media (max-width:760px){
-      .app{
-        padding-left:22px!important;
-        padding-right:22px!important;
-      }
-
-      .stats{display:none!important}
-
-      .grid{
-        grid-template-columns:repeat(4,minmax(58px,1fr))!important;
-        gap:22px 14px!important;
-      }
-
-      .sticker{
-        min-height:78px!important;
-        padding:6px!important;
-      }
-
-      .sticker::before{inset:2px!important}
-
-      .code{
-        font-size:22px!important;
-        max-width:66px!important;
-      }
-
-      .tabs{gap:34px!important}
-
-      .tab{
-        font-size:28px!important;
-      }
-
-      .tab[data-tab="trade"],
-      .tab[data-tab="edit"],
-      .tab[data-tab="board"]{
-        font-size:22px!important;
-      }
-
-      .filebox{
-        display:grid!important;
-        grid-template-columns:1fr!important;
-      }
-
-      .twoareas,
-      .matchbox{
-        grid-template-columns:1fr!important;
-      }
+    .toast.show{opacity:1;transform:translateY(0)}
+    .footer{
+      color:var(--muted2);
+      font-size:13px;
+      font-weight:750;
+      text-align:center;
+      margin:22px 0 0;
     }
-
-    @media (max-width:430px){
-      .app{
-        padding-left:22px!important;
-        padding-right:22px!important;
-      }
-
-      .grid{
-        grid-template-columns:repeat(4,minmax(52px,1fr))!important;
-        gap:20px 12px!important;
-      }
-
-      .sticker{
-        min-height:72px!important;
-      }
-
-      .code{
-        font-size:20px!important;
-        max-width:58px!important;
-      }
-
-      .badge,
-      .sticker .btn.small{
-        width:28px!important;
-        min-width:28px!important;
-        height:28px!important;
-        min-height:28px!important;
-        font-size:15px!important;
-      }
-
-      .search{min-height:62px!important}
-      .search input{font-size:25px!important}
-      .panel h2{font-size:34px!important}
-      .bottomnav{padding-left:8px!important;padding-right:8px!important}
-      .navitem strong{font-size:12px!important}
+    .has-import #importCard{display:none}
+    @media(max-width:430px){
+      .app{padding-left:16px;padding-right:16px}
+      .stats{display:none}
+      h1{font-size:33px}
+      .tabs{margin-left:-8px;margin-right:-8px}
+      .tab{font-size:11px}
+      .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:15px 9px}
+      .sticker{min-height:69px}
+      .code{font-size:17px;max-width:56px}
+      .qty-badge{min-width:23px;height:23px;font-size:12px;top:-4px;right:-4px}
+      .twoareas,.matchbox{grid-template-columns:1fr}
+      .btnrow{display:grid;grid-template-columns:1fr}
+      .btnrow .btn{width:100%}
+    }
+    @media(min-width:760px){
+      .grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr))}
+      .sticker{min-height:92px}
+      .twoareas,.matchbox{grid-template-columns:1fr 1fr}
+      .tabs{grid-template-columns:repeat(6,max-content);gap:22px;justify-content:start}
+      .tab{font-size:18px;padding-left:0;padding-right:0}
     }
   </style>
-
-
-  <style id="mobile-fix-v6">
-    /* Corrección v6: tabs compactas y estampitas limpias en celular */
-    .tabs{
-      display:grid!important;
-      grid-template-columns:repeat(5, 1fr)!important;
-      gap:0!important;
-      width:100%!important;
-      overflow:visible!important;
-      padding:6px 0 0!important;
-      border-bottom:1px solid var(--line)!important;
-    }
-
-    .tab{
-      min-width:0!important;
-      width:100%!important;
-      text-align:center!important;
-      padding:9px 4px 13px!important;
-      font-size:clamp(13px, 3.7vw, 18px)!important;
-      letter-spacing:-.02em!important;
-      font-weight:950!important;
-      overflow:hidden!important;
-      text-overflow:ellipsis!important;
-    }
-
-    .tab[data-tab="trade"],
-    .tab[data-tab="edit"],
-    .tab[data-tab="board"]{
-      font-size:clamp(12px, 3.4vw, 17px)!important;
-    }
-
-    .tab.active:after{
-      height:4px!important;
-      left:12%!important;
-      right:12%!important;
-    }
-
-    .controls{
-      grid-template-columns:1fr!important;
-      gap:8px!important;
-      padding-top:10px!important;
-    }
-
-    .sort-icon{
-      display:none!important;
-    }
-
-    .search{
-      min-height:56px!important;
-      border-radius:22px!important;
-      padding:0 14px!important;
-    }
-
-    .search::before{
-      font-size:28px!important;
-      margin-right:0!important;
-    }
-
-    .search input{
-      font-size:21px!important;
-    }
-
-    .row{
-      grid-template-columns:1fr!important;
-      gap:0!important;
-    }
-
-    .row .panel{
-      padding:10px 0!important;
-    }
-
-    .row .panel h2{
-      font-size:clamp(28px, 8vw, 36px)!important;
-      margin-bottom:10px!important;
-    }
-
-    .inputline{
-      grid-template-columns:1fr auto!important;
-      gap:8px!important;
-      margin-bottom:8px!important;
-    }
-
-    .inputline input{
-      min-height:50px!important;
-      border-radius:18px!important;
-      font-size:17px!important;
-    }
-
-    .action-row,
-    .panel .btn[id^="copy"]{
-      margin-top:0!important;
-    }
-
-    .grid{
-      grid-template-columns:repeat(auto-fill, minmax(76px, 1fr))!important;
-      gap:16px 12px!important;
-      padding-top:10px!important;
-    }
-
-    .sticker{
-      min-height:76px!important;
-      padding:4px!important;
-    }
-
-    .sticker::before{
-      inset:2px!important;
-    }
-
-    .code{
-      font-size:clamp(16px, 5vw, 22px)!important;
-      max-width:68px!important;
-      line-height:.95!important;
-    }
-
-    .meta{
-      top:-5px!important;
-      right:-5px!important;
-    }
-
-    .sticker .btn.small,
-    .sticker .done-btn{
-      width:28px!important;
-      min-width:28px!important;
-      height:28px!important;
-      min-height:28px!important;
-      padding:0!important;
-      font-size:17px!important;
-      line-height:1!important;
-      border-radius:999px!important;
-    }
-
-    .badge{
-      width:28px!important;
-      min-width:28px!important;
-      height:28px!important;
-      min-height:28px!important;
-      padding:0!important;
-      font-size:14px!important;
-      line-height:1!important;
-      border-radius:999px!important;
-    }
-
-    #dupesList .meta{
-      top:-7px!important;
-      right:-8px!important;
-      gap:2px!important;
-    }
-
-    #dupesList .meta span:last-child{
-      display:flex!important;
-      gap:2px!important;
-    }
-
-    #dupesList .sticker .btn.small{
-      width:24px!important;
-      min-width:24px!important;
-      height:24px!important;
-      min-height:24px!important;
-      font-size:16px!important;
-    }
-
-    #dupesList .badge{
-      width:26px!important;
-      min-width:26px!important;
-      height:26px!important;
-      min-height:26px!important;
-      font-size:13px!important;
-    }
-
-    .fab{
-      width:56px!important;
-      height:56px!important;
-      font-size:34px!important;
-      right:18px!important;
-      bottom:calc(86px + var(--safe-bottom))!important;
-    }
-
-    .bottomnav{
-      grid-template-columns:repeat(4,1fr)!important;
-      padding:7px 8px calc(7px + var(--safe-bottom))!important;
-    }
-
-    .navitem{
-      min-height:56px!important;
-      gap:3px!important;
-      font-size:11px!important;
-    }
-
-    .navitem span{
-      font-size:23px!important;
-    }
-
-    .navitem strong{
-      font-size:11px!important;
-    }
-
-    @media (max-width:430px){
-      .app{
-        padding-left:16px!important;
-        padding-right:16px!important;
-      }
-
-      h1{
-        font-size:34px!important;
-      }
-
-      .top-upload{
-        width:44px!important;
-        height:44px!important;
-      }
-
-      .tabs{
-        margin-left:-4px!important;
-        margin-right:-4px!important;
-        width:calc(100% + 8px)!important;
-      }
-
-      .tab{
-        font-size:12px!important;
-        padding-left:2px!important;
-        padding-right:2px!important;
-      }
-
-      .tab[data-tab="trade"],
-      .tab[data-tab="edit"],
-      .tab[data-tab="board"]{
-        font-size:11px!important;
-      }
-
-      .grid{
-        grid-template-columns:repeat(4, minmax(0, 1fr))!important;
-        gap:15px 10px!important;
-      }
-
-      .sticker{
-        min-height:70px!important;
-      }
-
-      .code{
-        font-size:18px!important;
-        max-width:56px!important;
-      }
-
-      .sticker .btn.small,
-      .sticker .done-btn{
-        width:25px!important;
-        min-width:25px!important;
-        height:25px!important;
-        min-height:25px!important;
-        font-size:15px!important;
-      }
-    }
-
-    @media (min-width:761px){
-      .tabs{
-        grid-template-columns:repeat(5, max-content)!important;
-        gap:28px!important;
-        justify-content:start!important;
-      }
-
-      .tab{
-        width:auto!important;
-        font-size:20px!important;
-        text-align:left!important;
-      }
-
-      .controls{
-        grid-template-columns:1fr!important;
-      }
-
-      .grid{
-        grid-template-columns:repeat(auto-fill, minmax(92px, 1fr))!important;
-      }
-    }
-  </style>
-
 </head>
 <body>
   <main class="app" id="appRoot">
-    <section class="hero">
-      <div class="card header">
-        <div class="titleline">
-          <h1>Panini Tracker</h1>
-          <button class="top-upload" id="pickFileTop" title="Cargar Excel">⇧</button>
-          <div class="statuspill" id="deviceStatus">guardado local</div>
-        </div>
-
-        <div class="stats" aria-live="polite">
-          <div class="stat"><b id="statMissing">0</b><span>faltantes</span></div>
-          <div class="stat"><b id="statDupes">0</b><span>repetidas</span></div>
-          <div class="stat"><b id="statDupesTotal">0</b><span>total repetidas</span></div>
-          <div class="stat"><b id="statTrade">0</b><span>match</span></div>
-        </div>
-
-        <div class="mini">
-          <span>📱 móvil</span>
-          <span>💾 autosave</span>
-          <span>⚡ rápido</span>
-        </div>
+    <header class="topbar">
+      <h1>Panini Tracker</h1>
+      <div class="top-actions">
+        <button class="iconbtn" id="pickFileTop" title="Cargar Excel">⇧</button>
+        <button class="iconbtn" id="newListTop" title="Nueva lista">＋</button>
       </div>
+    </header>
 
-      <div class="card toolbar" id="importCard">
-        <div id="drop" class="drop">
-          <strong>Arrastrá tu Excel aquí</strong>
-          <span>o cargalo con el botón.</span>
-        </div>
-        <div class="filebox">
-          <input id="file" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
-          <button class="btn primary" id="pickFile">📥 Cargar Excel</button>
-          <button class="btn" id="exportCsv">📤 Exportar CSV</button>
-          <button class="btn danger" id="clearAll">🧹 Limpiar</button>
-        </div>
-        <div class="notice">
-          <strong>Atajos:</strong> <span class="kbd">/</span> buscar,
-          <span class="kbd">F</span> faltantes,
-          <span class="kbd">R</span> repetidas,
-          <span class="kbd">I</span> intercambio.
-        </div>
+    <nav class="tabs" aria-label="Vistas">
+      <button class="tab active" data-tab="all">Todas</button>
+      <button class="tab" data-tab="missing">Faltan</button>
+      <button class="tab" data-tab="dupes">Sobran</button>
+      <button class="tab" data-tab="trade">Cambiar</button>
+      <button class="tab" data-tab="edit">Cargar</button>
+      <button class="tab" data-tab="board">Resumen</button>
+    </nav>
+
+    <section class="stats" aria-live="polite">
+      <div class="stat"><b id="statOwned">0</b><span>en álbum</span></div>
+      <div class="stat"><b id="statMissing">980</b><span>faltan</span></div>
+      <div class="stat"><b id="statDupes">0</b><span>sobran</span></div>
+      <div class="stat"><b id="statTrade">0</b><span>match</span></div>
+    </section>
+
+    <section class="import-card" id="importCard">
+      <div id="drop" class="drop">
+        <strong>Arrastrá tu Excel aquí</strong>
+        <span>o cargalo con el botón. La app asumirá que todo lo que no esté en faltantes ya está en tu álbum.</span>
+      </div>
+      <div class="btnrow">
+        <input id="file" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
+        <button class="btn primary" id="pickFile">📥 Cargar Excel</button>
+        <button class="btn" id="exportCsv">📤 Exportar CSV</button>
+        <button class="btn danger" id="clearAll">🧹 Nueva lista</button>
       </div>
     </section>
 
     <section class="controls">
       <div class="search">
-        🔎 <input id="search" placeholder="Buscar..." autocomplete="off" />
-        <button class="btn small ghost" id="clearSearch">✕</button>
+        <span class="mag">🔎</span>
+        <input id="search" placeholder="Buscar" autocomplete="off" />
+        <button class="btn small" id="clearSearch">✕</button>
       </div>
-      <nav class="tabs" aria-label="Vistas">
-        <button class="tab active" data-tab="missing">Faltan</button>
-        <button class="tab" data-tab="dupes">Sobran</button>
-        <button class="tab" data-tab="trade">Cambiar</button>
-        <button class="tab" data-tab="edit">Cargar</button>
-        <button class="tab" data-tab="board">Resumen</button>
-      </nav>
     </section>
 
-    <section id="view-missing" class="view active">
-      <div class="row">
-        <div class="card panel">
-          <h2>Me faltan</h2>
-          <div class="inputline">
-            <input id="newMissing" placeholder="Ej. ARG 12" />
-            <button class="btn" id="addMissing">Agregar</button>
-          </div>
-        </div>
-        <div class="card panel">
-          <h2>Acción rápida</h2>
-          <button class="btn" id="copyMissing">Copiar faltantes</button>
-        </div>
+    <section id="view-all" class="view active">
+      <div class="panel">
+        <h2>Todas</h2>
+        <p class="tap-hint">Tocá una estampita para sumar cantidad. Mantener presionado resta. 0 = falta, 1 = álbum, 2+ = repetida.</p>
       </div>
-      <br>
-      <div id="missingList" class="grid"></div>
+      <div id="allList"></div>
+    </section>
+
+    <section id="view-missing" class="view">
+      <div class="panel">
+        <h2>Me faltan</h2>
+        <p class="tap-hint">Tocá una estampita cuando la consigas. Pasará automáticamente al álbum.</p>
+        <div class="inputline">
+          <input id="newMissing" placeholder="Ej. ARG 12" />
+          <button class="btn primary" id="addMissing">Agregar</button>
+        </div>
+        <button class="btn" id="copyMissing">Copiar faltantes</button>
+      </div>
+      <div id="missingList"></div>
     </section>
 
     <section id="view-dupes" class="view">
-      <div class="row">
-        <div class="card panel">
-          <h2>Tengo repetidas</h2>
-          <div class="inputline">
-            <input id="newDupe" placeholder="Ej. MEX 7" />
-            <button class="btn" id="addDupe">Agregar</button>
-          </div>
+      <div class="panel">
+        <h2>Tengo repetidas</h2>
+        <p class="tap-hint">Tocá para sumar otra repetida. Mantener presionado resta.</p>
+        <div class="inputline">
+          <input id="newDupe" placeholder="Ej. MEX 7" />
+          <button class="btn primary" id="addDupe">Agregar</button>
         </div>
-        <div class="card panel">
-          <h2>Acción rápida</h2>
-          <button class="btn" id="copyDupes">Copiar repetidas</button>
-        </div>
+        <button class="btn" id="copyDupes">Copiar repetidas</button>
       </div>
-      <br>
-      <div id="dupesList" class="grid"></div>
+      <div id="dupesList"></div>
     </section>
 
     <section id="view-trade" class="view">
-      <div class="card panel">
-        <h2>Modo intercambio</h2>
+      <div class="panel">
+        <h2>Cambiar</h2>
         <div class="twoareas">
           <div>
             <label class="caption" for="otherMissing">A la otra persona le faltan</label>
@@ -1484,7 +583,7 @@
             <textarea id="otherDupes" placeholder="Pegá códigos..."></textarea>
           </div>
         </div>
-        <div class="filebox" style="margin-top:12px">
+        <div class="btnrow">
           <button class="btn primary" id="calcTrade">Calcular intercambio</button>
           <button class="btn" id="copyTrade">Copiar propuesta</button>
           <button class="btn" id="clearTrade">Limpiar</button>
@@ -1494,8 +593,8 @@
     </section>
 
     <section id="view-edit" class="view">
-      <div class="card panel">
-        <h2>Carga rápida manual</h2>
+      <div class="panel">
+        <h2>Carga rápida</h2>
         <div class="twoareas">
           <div>
             <label class="caption" for="bulkMissing">Mis faltantes</label>
@@ -1506,15 +605,15 @@
             <textarea id="bulkDupes"></textarea>
           </div>
         </div>
-        <div class="filebox" style="margin-top:12px">
-          <button class="btn primary" id="saveBulk">Guardar listas</button>
-          <button class="btn" id="mergeBulk">Sumar a lo existente</button>
+        <div class="btnrow">
+          <button class="btn primary" id="saveBulk">Guardar como Excel</button>
+          <button class="btn" id="mergeBulk">Sumar a lo actual</button>
         </div>
       </div>
     </section>
 
     <section id="view-board" class="view">
-      <div class="card panel">
+      <div class="panel">
         <h2>Resumen</h2>
         <div class="tablewrap">
           <table>
@@ -1522,65 +621,65 @@
             <tbody id="summaryRows"></tbody>
           </table>
         </div>
-
-        <div class="notice" style="margin-top:14px">
-          <strong>Backup:</strong> guardá una copia cuando quieras proteger tus datos.
-        </div>
-        <div class="backup-actions">
+        <div class="notice"><strong>Backup:</strong> guardá una copia cuando quieras proteger tus datos.</div>
+        <div class="btnrow">
           <button class="btn primary" id="createBackup">💾 Crear backup</button>
           <button class="btn" id="restoreBackup">♻️ Restaurar backup</button>
-        </div>
-        <div class="backup-note">
-          El backup es un archivo .json. Podés guardarlo en Archivos, iCloud Drive, Google Drive o enviártelo por WhatsApp.
         </div>
       </div>
     </section>
 
-    <p class="footer">
-      Tus datos quedan guardados en este navegador.
-    </p>
+    <p class="footer">Catálogo base: 980 estampitas. No incluye paralelas ni extras promocionales.</p>
   </main>
 
   <input id="backupFile" class="hidden" type="file" accept=".json,application/json" />
   <button class="fab" id="fabNewList" title="Nueva lista">+</button>
 
   <nav class="bottomnav" aria-label="Navegación inferior">
-    <button class="navitem active" data-tab="missing"><span>📖</span><strong>Álbum</strong></button>
+    <button class="navitem active" data-tab="all"><span>📖</span><strong>Álbum</strong></button>
     <button class="navitem" data-tab="board"><span>▮▮▮</span><strong>Estadísticas</strong></button>
     <button class="navitem" data-tab="trade"><span>🔄</span><strong>Cambiar</strong></button>
     <button class="navitem" data-tab="edit"><span>⚙️</span><strong>Config.</strong></button>
   </nav>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
-  const LS_KEY = "panini_tracker_pro_v2";
+  const CATALOG = [{"id": "FWC", "title": "FWC - Especiales", "items": [{"code": "00", "label": "PANINI LOGO", "team": "FIFA"}, {"code": "FWC 1", "label": "WC LOGO", "team": "FIFA"}, {"code": "FWC 2", "label": "WC LOGO", "team": "FIFA"}, {"code": "FWC 3", "label": "OFFICIAL MASCOTS", "team": "FIFA"}, {"code": "FWC 4", "label": "OFFICIAL SLOGAN", "team": "FIFA"}, {"code": "FWC 5", "label": "OFFICIAL BALL", "team": "FIFA"}, {"code": "FWC 6", "label": "CANADA - HOST COUNTRY EMBLEM", "team": "FIFA"}, {"code": "FWC 7", "label": "MEXICO - HOST COUNTRY EMBLEM", "team": "FIFA"}, {"code": "FWC 8", "label": "USA - HOST COUNTRY EMBLEM", "team": "FIFA"}, {"code": "FWC 9", "label": "ITALY 1934", "team": "FIFA"}, {"code": "FWC 10", "label": "URUGUAY 1950", "team": "FIFA"}, {"code": "FWC 11", "label": "GERMANY 1964", "team": "FIFA"}, {"code": "FWC 12", "label": "BRAZIL 1962", "team": "FIFA"}, {"code": "FWC 13", "label": "GERMANY 1974", "team": "FIFA"}, {"code": "FWC 14", "label": "ARGENTINA 1986", "team": "FIFA"}, {"code": "FWC 15", "label": "BRAZIL 1994", "team": "FIFA"}, {"code": "FWC 16", "label": "BRAZIL 2002", "team": "FIFA"}, {"code": "FWC 17", "label": "ITALY 2006", "team": "FIFA"}, {"code": "FWC 18", "label": "GERMANY 2014", "team": "FIFA"}, {"code": "FWC 19", "label": "ARGENTINA 2022", "team": "FIFA"}]}, {"id": "MEX", "title": "Mexico", "items": [{"code": "MEX 1", "label": "BADGE", "team": "Mexico"}, {"code": "MEX 2", "label": "", "team": "Mexico"}, {"code": "MEX 3", "label": "", "team": "Mexico"}, {"code": "MEX 4", "label": "", "team": "Mexico"}, {"code": "MEX 5", "label": "", "team": "Mexico"}, {"code": "MEX 6", "label": "", "team": "Mexico"}, {"code": "MEX 7", "label": "", "team": "Mexico"}, {"code": "MEX 8", "label": "", "team": "Mexico"}, {"code": "MEX 9", "label": "", "team": "Mexico"}, {"code": "MEX 10", "label": "", "team": "Mexico"}, {"code": "MEX 11", "label": "", "team": "Mexico"}, {"code": "MEX 12", "label": "", "team": "Mexico"}, {"code": "MEX 13", "label": "SQUAD", "team": "Mexico"}, {"code": "MEX 14", "label": "", "team": "Mexico"}, {"code": "MEX 15", "label": "", "team": "Mexico"}, {"code": "MEX 16", "label": "", "team": "Mexico"}, {"code": "MEX 17", "label": "", "team": "Mexico"}, {"code": "MEX 18", "label": "", "team": "Mexico"}, {"code": "MEX 19", "label": "", "team": "Mexico"}, {"code": "MEX 20", "label": "", "team": "Mexico"}]}, {"id": "RSA", "title": "South Africa", "items": [{"code": "RSA 1", "label": "BADGE", "team": "South Africa"}, {"code": "RSA 2", "label": "", "team": "South Africa"}, {"code": "RSA 3", "label": "", "team": "South Africa"}, {"code": "RSA 4", "label": "", "team": "South Africa"}, {"code": "RSA 5", "label": "", "team": "South Africa"}, {"code": "RSA 6", "label": "", "team": "South Africa"}, {"code": "RSA 7", "label": "", "team": "South Africa"}, {"code": "RSA 8", "label": "", "team": "South Africa"}, {"code": "RSA 9", "label": "", "team": "South Africa"}, {"code": "RSA 10", "label": "", "team": "South Africa"}, {"code": "RSA 11", "label": "", "team": "South Africa"}, {"code": "RSA 12", "label": "", "team": "South Africa"}, {"code": "RSA 13", "label": "SQUAD", "team": "South Africa"}, {"code": "RSA 14", "label": "", "team": "South Africa"}, {"code": "RSA 15", "label": "", "team": "South Africa"}, {"code": "RSA 16", "label": "", "team": "South Africa"}, {"code": "RSA 17", "label": "", "team": "South Africa"}, {"code": "RSA 18", "label": "", "team": "South Africa"}, {"code": "RSA 19", "label": "", "team": "South Africa"}, {"code": "RSA 20", "label": "", "team": "South Africa"}]}, {"id": "KOR", "title": "Korea Republic", "items": [{"code": "KOR 1", "label": "BADGE", "team": "Korea Republic"}, {"code": "KOR 2", "label": "", "team": "Korea Republic"}, {"code": "KOR 3", "label": "", "team": "Korea Republic"}, {"code": "KOR 4", "label": "", "team": "Korea Republic"}, {"code": "KOR 5", "label": "", "team": "Korea Republic"}, {"code": "KOR 6", "label": "", "team": "Korea Republic"}, {"code": "KOR 7", "label": "", "team": "Korea Republic"}, {"code": "KOR 8", "label": "", "team": "Korea Republic"}, {"code": "KOR 9", "label": "", "team": "Korea Republic"}, {"code": "KOR 10", "label": "", "team": "Korea Republic"}, {"code": "KOR 11", "label": "", "team": "Korea Republic"}, {"code": "KOR 12", "label": "", "team": "Korea Republic"}, {"code": "KOR 13", "label": "SQUAD", "team": "Korea Republic"}, {"code": "KOR 14", "label": "", "team": "Korea Republic"}, {"code": "KOR 15", "label": "", "team": "Korea Republic"}, {"code": "KOR 16", "label": "", "team": "Korea Republic"}, {"code": "KOR 17", "label": "", "team": "Korea Republic"}, {"code": "KOR 18", "label": "", "team": "Korea Republic"}, {"code": "KOR 19", "label": "", "team": "Korea Republic"}, {"code": "KOR 20", "label": "", "team": "Korea Republic"}]}, {"id": "CZE", "title": "Czechia", "items": [{"code": "CZE 1", "label": "BADGE", "team": "Czechia"}, {"code": "CZE 2", "label": "", "team": "Czechia"}, {"code": "CZE 3", "label": "", "team": "Czechia"}, {"code": "CZE 4", "label": "", "team": "Czechia"}, {"code": "CZE 5", "label": "", "team": "Czechia"}, {"code": "CZE 6", "label": "", "team": "Czechia"}, {"code": "CZE 7", "label": "", "team": "Czechia"}, {"code": "CZE 8", "label": "", "team": "Czechia"}, {"code": "CZE 9", "label": "", "team": "Czechia"}, {"code": "CZE 10", "label": "", "team": "Czechia"}, {"code": "CZE 11", "label": "", "team": "Czechia"}, {"code": "CZE 12", "label": "", "team": "Czechia"}, {"code": "CZE 13", "label": "SQUAD", "team": "Czechia"}, {"code": "CZE 14", "label": "", "team": "Czechia"}, {"code": "CZE 15", "label": "", "team": "Czechia"}, {"code": "CZE 16", "label": "", "team": "Czechia"}, {"code": "CZE 17", "label": "", "team": "Czechia"}, {"code": "CZE 18", "label": "", "team": "Czechia"}, {"code": "CZE 19", "label": "", "team": "Czechia"}, {"code": "CZE 20", "label": "", "team": "Czechia"}]}, {"id": "CAN", "title": "Canada", "items": [{"code": "CAN 1", "label": "BADGE", "team": "Canada"}, {"code": "CAN 2", "label": "", "team": "Canada"}, {"code": "CAN 3", "label": "", "team": "Canada"}, {"code": "CAN 4", "label": "", "team": "Canada"}, {"code": "CAN 5", "label": "", "team": "Canada"}, {"code": "CAN 6", "label": "", "team": "Canada"}, {"code": "CAN 7", "label": "", "team": "Canada"}, {"code": "CAN 8", "label": "", "team": "Canada"}, {"code": "CAN 9", "label": "", "team": "Canada"}, {"code": "CAN 10", "label": "", "team": "Canada"}, {"code": "CAN 11", "label": "", "team": "Canada"}, {"code": "CAN 12", "label": "", "team": "Canada"}, {"code": "CAN 13", "label": "SQUAD", "team": "Canada"}, {"code": "CAN 14", "label": "", "team": "Canada"}, {"code": "CAN 15", "label": "", "team": "Canada"}, {"code": "CAN 16", "label": "", "team": "Canada"}, {"code": "CAN 17", "label": "", "team": "Canada"}, {"code": "CAN 18", "label": "", "team": "Canada"}, {"code": "CAN 19", "label": "", "team": "Canada"}, {"code": "CAN 20", "label": "", "team": "Canada"}]}, {"id": "BIH", "title": "Bosnia and Herzegovina", "items": [{"code": "BIH 1", "label": "BADGE", "team": "Bosnia and Herzegovina"}, {"code": "BIH 2", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 3", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 4", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 5", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 6", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 7", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 8", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 9", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 10", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 11", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 12", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 13", "label": "SQUAD", "team": "Bosnia and Herzegovina"}, {"code": "BIH 14", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 15", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 16", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 17", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 18", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 19", "label": "", "team": "Bosnia and Herzegovina"}, {"code": "BIH 20", "label": "", "team": "Bosnia and Herzegovina"}]}, {"id": "BRA", "title": "Brazil", "items": [{"code": "BRA 1", "label": "BADGE", "team": "Brazil"}, {"code": "BRA 2", "label": "", "team": "Brazil"}, {"code": "BRA 3", "label": "", "team": "Brazil"}, {"code": "BRA 4", "label": "", "team": "Brazil"}, {"code": "BRA 5", "label": "", "team": "Brazil"}, {"code": "BRA 6", "label": "", "team": "Brazil"}, {"code": "BRA 7", "label": "", "team": "Brazil"}, {"code": "BRA 8", "label": "", "team": "Brazil"}, {"code": "BRA 9", "label": "", "team": "Brazil"}, {"code": "BRA 10", "label": "", "team": "Brazil"}, {"code": "BRA 11", "label": "", "team": "Brazil"}, {"code": "BRA 12", "label": "", "team": "Brazil"}, {"code": "BRA 13", "label": "SQUAD", "team": "Brazil"}, {"code": "BRA 14", "label": "", "team": "Brazil"}, {"code": "BRA 15", "label": "", "team": "Brazil"}, {"code": "BRA 16", "label": "", "team": "Brazil"}, {"code": "BRA 17", "label": "", "team": "Brazil"}, {"code": "BRA 18", "label": "", "team": "Brazil"}, {"code": "BRA 19", "label": "", "team": "Brazil"}, {"code": "BRA 20", "label": "", "team": "Brazil"}]}, {"id": "COL", "title": "Colombia", "items": [{"code": "COL 1", "label": "BADGE", "team": "Colombia"}, {"code": "COL 2", "label": "", "team": "Colombia"}, {"code": "COL 3", "label": "", "team": "Colombia"}, {"code": "COL 4", "label": "", "team": "Colombia"}, {"code": "COL 5", "label": "", "team": "Colombia"}, {"code": "COL 6", "label": "", "team": "Colombia"}, {"code": "COL 7", "label": "", "team": "Colombia"}, {"code": "COL 8", "label": "", "team": "Colombia"}, {"code": "COL 9", "label": "", "team": "Colombia"}, {"code": "COL 10", "label": "", "team": "Colombia"}, {"code": "COL 11", "label": "", "team": "Colombia"}, {"code": "COL 12", "label": "", "team": "Colombia"}, {"code": "COL 13", "label": "SQUAD", "team": "Colombia"}, {"code": "COL 14", "label": "", "team": "Colombia"}, {"code": "COL 15", "label": "", "team": "Colombia"}, {"code": "COL 16", "label": "", "team": "Colombia"}, {"code": "COL 17", "label": "", "team": "Colombia"}, {"code": "COL 18", "label": "", "team": "Colombia"}, {"code": "COL 19", "label": "", "team": "Colombia"}, {"code": "COL 20", "label": "", "team": "Colombia"}]}, {"id": "ECU", "title": "Ecuador", "items": [{"code": "ECU 1", "label": "BADGE", "team": "Ecuador"}, {"code": "ECU 2", "label": "", "team": "Ecuador"}, {"code": "ECU 3", "label": "", "team": "Ecuador"}, {"code": "ECU 4", "label": "", "team": "Ecuador"}, {"code": "ECU 5", "label": "", "team": "Ecuador"}, {"code": "ECU 6", "label": "", "team": "Ecuador"}, {"code": "ECU 7", "label": "", "team": "Ecuador"}, {"code": "ECU 8", "label": "", "team": "Ecuador"}, {"code": "ECU 9", "label": "", "team": "Ecuador"}, {"code": "ECU 10", "label": "", "team": "Ecuador"}, {"code": "ECU 11", "label": "", "team": "Ecuador"}, {"code": "ECU 12", "label": "", "team": "Ecuador"}, {"code": "ECU 13", "label": "SQUAD", "team": "Ecuador"}, {"code": "ECU 14", "label": "", "team": "Ecuador"}, {"code": "ECU 15", "label": "", "team": "Ecuador"}, {"code": "ECU 16", "label": "", "team": "Ecuador"}, {"code": "ECU 17", "label": "", "team": "Ecuador"}, {"code": "ECU 18", "label": "", "team": "Ecuador"}, {"code": "ECU 19", "label": "", "team": "Ecuador"}, {"code": "ECU 20", "label": "", "team": "Ecuador"}]}, {"id": "PAR", "title": "Paraguay", "items": [{"code": "PAR 1", "label": "BADGE", "team": "Paraguay"}, {"code": "PAR 2", "label": "", "team": "Paraguay"}, {"code": "PAR 3", "label": "", "team": "Paraguay"}, {"code": "PAR 4", "label": "", "team": "Paraguay"}, {"code": "PAR 5", "label": "", "team": "Paraguay"}, {"code": "PAR 6", "label": "", "team": "Paraguay"}, {"code": "PAR 7", "label": "", "team": "Paraguay"}, {"code": "PAR 8", "label": "", "team": "Paraguay"}, {"code": "PAR 9", "label": "", "team": "Paraguay"}, {"code": "PAR 10", "label": "", "team": "Paraguay"}, {"code": "PAR 11", "label": "", "team": "Paraguay"}, {"code": "PAR 12", "label": "", "team": "Paraguay"}, {"code": "PAR 13", "label": "SQUAD", "team": "Paraguay"}, {"code": "PAR 14", "label": "", "team": "Paraguay"}, {"code": "PAR 15", "label": "", "team": "Paraguay"}, {"code": "PAR 16", "label": "", "team": "Paraguay"}, {"code": "PAR 17", "label": "", "team": "Paraguay"}, {"code": "PAR 18", "label": "", "team": "Paraguay"}, {"code": "PAR 19", "label": "", "team": "Paraguay"}, {"code": "PAR 20", "label": "", "team": "Paraguay"}]}, {"id": "URU", "title": "Uruguay", "items": [{"code": "URU 1", "label": "BADGE", "team": "Uruguay"}, {"code": "URU 2", "label": "", "team": "Uruguay"}, {"code": "URU 3", "label": "", "team": "Uruguay"}, {"code": "URU 4", "label": "", "team": "Uruguay"}, {"code": "URU 5", "label": "", "team": "Uruguay"}, {"code": "URU 6", "label": "", "team": "Uruguay"}, {"code": "URU 7", "label": "", "team": "Uruguay"}, {"code": "URU 8", "label": "", "team": "Uruguay"}, {"code": "URU 9", "label": "", "team": "Uruguay"}, {"code": "URU 10", "label": "", "team": "Uruguay"}, {"code": "URU 11", "label": "", "team": "Uruguay"}, {"code": "URU 12", "label": "", "team": "Uruguay"}, {"code": "URU 13", "label": "SQUAD", "team": "Uruguay"}, {"code": "URU 14", "label": "", "team": "Uruguay"}, {"code": "URU 15", "label": "", "team": "Uruguay"}, {"code": "URU 16", "label": "", "team": "Uruguay"}, {"code": "URU 17", "label": "", "team": "Uruguay"}, {"code": "URU 18", "label": "", "team": "Uruguay"}, {"code": "URU 19", "label": "", "team": "Uruguay"}, {"code": "URU 20", "label": "", "team": "Uruguay"}]}, {"id": "JPN", "title": "Japan", "items": [{"code": "JPN 1", "label": "BADGE", "team": "Japan"}, {"code": "JPN 2", "label": "", "team": "Japan"}, {"code": "JPN 3", "label": "", "team": "Japan"}, {"code": "JPN 4", "label": "", "team": "Japan"}, {"code": "JPN 5", "label": "", "team": "Japan"}, {"code": "JPN 6", "label": "", "team": "Japan"}, {"code": "JPN 7", "label": "", "team": "Japan"}, {"code": "JPN 8", "label": "", "team": "Japan"}, {"code": "JPN 9", "label": "", "team": "Japan"}, {"code": "JPN 10", "label": "", "team": "Japan"}, {"code": "JPN 11", "label": "", "team": "Japan"}, {"code": "JPN 12", "label": "", "team": "Japan"}, {"code": "JPN 13", "label": "SQUAD", "team": "Japan"}, {"code": "JPN 14", "label": "", "team": "Japan"}, {"code": "JPN 15", "label": "", "team": "Japan"}, {"code": "JPN 16", "label": "", "team": "Japan"}, {"code": "JPN 17", "label": "", "team": "Japan"}, {"code": "JPN 18", "label": "", "team": "Japan"}, {"code": "JPN 19", "label": "", "team": "Japan"}, {"code": "JPN 20", "label": "", "team": "Japan"}]}, {"id": "QAT", "title": "Qatar", "items": [{"code": "QAT 1", "label": "BADGE", "team": "Qatar"}, {"code": "QAT 2", "label": "", "team": "Qatar"}, {"code": "QAT 3", "label": "", "team": "Qatar"}, {"code": "QAT 4", "label": "", "team": "Qatar"}, {"code": "QAT 5", "label": "", "team": "Qatar"}, {"code": "QAT 6", "label": "", "team": "Qatar"}, {"code": "QAT 7", "label": "", "team": "Qatar"}, {"code": "QAT 8", "label": "", "team": "Qatar"}, {"code": "QAT 9", "label": "", "team": "Qatar"}, {"code": "QAT 10", "label": "", "team": "Qatar"}, {"code": "QAT 11", "label": "", "team": "Qatar"}, {"code": "QAT 12", "label": "", "team": "Qatar"}, {"code": "QAT 13", "label": "SQUAD", "team": "Qatar"}, {"code": "QAT 14", "label": "", "team": "Qatar"}, {"code": "QAT 15", "label": "", "team": "Qatar"}, {"code": "QAT 16", "label": "", "team": "Qatar"}, {"code": "QAT 17", "label": "", "team": "Qatar"}, {"code": "QAT 18", "label": "", "team": "Qatar"}, {"code": "QAT 19", "label": "", "team": "Qatar"}, {"code": "QAT 20", "label": "", "team": "Qatar"}]}, {"id": "IRN", "title": "Iran", "items": [{"code": "IRN 1", "label": "BADGE", "team": "Iran"}, {"code": "IRN 2", "label": "", "team": "Iran"}, {"code": "IRN 3", "label": "", "team": "Iran"}, {"code": "IRN 4", "label": "", "team": "Iran"}, {"code": "IRN 5", "label": "", "team": "Iran"}, {"code": "IRN 6", "label": "", "team": "Iran"}, {"code": "IRN 7", "label": "", "team": "Iran"}, {"code": "IRN 8", "label": "", "team": "Iran"}, {"code": "IRN 9", "label": "", "team": "Iran"}, {"code": "IRN 10", "label": "", "team": "Iran"}, {"code": "IRN 11", "label": "", "team": "Iran"}, {"code": "IRN 12", "label": "", "team": "Iran"}, {"code": "IRN 13", "label": "SQUAD", "team": "Iran"}, {"code": "IRN 14", "label": "", "team": "Iran"}, {"code": "IRN 15", "label": "", "team": "Iran"}, {"code": "IRN 16", "label": "", "team": "Iran"}, {"code": "IRN 17", "label": "", "team": "Iran"}, {"code": "IRN 18", "label": "", "team": "Iran"}, {"code": "IRN 19", "label": "", "team": "Iran"}, {"code": "IRN 20", "label": "", "team": "Iran"}]}, {"id": "UZB", "title": "Uzbekistan", "items": [{"code": "UZB 1", "label": "BADGE", "team": "Uzbekistan"}, {"code": "UZB 2", "label": "", "team": "Uzbekistan"}, {"code": "UZB 3", "label": "", "team": "Uzbekistan"}, {"code": "UZB 4", "label": "", "team": "Uzbekistan"}, {"code": "UZB 5", "label": "", "team": "Uzbekistan"}, {"code": "UZB 6", "label": "", "team": "Uzbekistan"}, {"code": "UZB 7", "label": "", "team": "Uzbekistan"}, {"code": "UZB 8", "label": "", "team": "Uzbekistan"}, {"code": "UZB 9", "label": "", "team": "Uzbekistan"}, {"code": "UZB 10", "label": "", "team": "Uzbekistan"}, {"code": "UZB 11", "label": "", "team": "Uzbekistan"}, {"code": "UZB 12", "label": "", "team": "Uzbekistan"}, {"code": "UZB 13", "label": "SQUAD", "team": "Uzbekistan"}, {"code": "UZB 14", "label": "", "team": "Uzbekistan"}, {"code": "UZB 15", "label": "", "team": "Uzbekistan"}, {"code": "UZB 16", "label": "", "team": "Uzbekistan"}, {"code": "UZB 17", "label": "", "team": "Uzbekistan"}, {"code": "UZB 18", "label": "", "team": "Uzbekistan"}, {"code": "UZB 19", "label": "", "team": "Uzbekistan"}, {"code": "UZB 20", "label": "", "team": "Uzbekistan"}]}, {"id": "AUS", "title": "Australia", "items": [{"code": "AUS 1", "label": "BADGE", "team": "Australia"}, {"code": "AUS 2", "label": "", "team": "Australia"}, {"code": "AUS 3", "label": "", "team": "Australia"}, {"code": "AUS 4", "label": "", "team": "Australia"}, {"code": "AUS 5", "label": "", "team": "Australia"}, {"code": "AUS 6", "label": "", "team": "Australia"}, {"code": "AUS 7", "label": "", "team": "Australia"}, {"code": "AUS 8", "label": "", "team": "Australia"}, {"code": "AUS 9", "label": "", "team": "Australia"}, {"code": "AUS 10", "label": "", "team": "Australia"}, {"code": "AUS 11", "label": "", "team": "Australia"}, {"code": "AUS 12", "label": "", "team": "Australia"}, {"code": "AUS 13", "label": "SQUAD", "team": "Australia"}, {"code": "AUS 14", "label": "", "team": "Australia"}, {"code": "AUS 15", "label": "", "team": "Australia"}, {"code": "AUS 16", "label": "", "team": "Australia"}, {"code": "AUS 17", "label": "", "team": "Australia"}, {"code": "AUS 18", "label": "", "team": "Australia"}, {"code": "AUS 19", "label": "", "team": "Australia"}, {"code": "AUS 20", "label": "", "team": "Australia"}]}, {"id": "JOR", "title": "Jordan", "items": [{"code": "JOR 1", "label": "BADGE", "team": "Jordan"}, {"code": "JOR 2", "label": "", "team": "Jordan"}, {"code": "JOR 3", "label": "", "team": "Jordan"}, {"code": "JOR 4", "label": "", "team": "Jordan"}, {"code": "JOR 5", "label": "", "team": "Jordan"}, {"code": "JOR 6", "label": "", "team": "Jordan"}, {"code": "JOR 7", "label": "", "team": "Jordan"}, {"code": "JOR 8", "label": "", "team": "Jordan"}, {"code": "JOR 9", "label": "", "team": "Jordan"}, {"code": "JOR 10", "label": "", "team": "Jordan"}, {"code": "JOR 11", "label": "", "team": "Jordan"}, {"code": "JOR 12", "label": "", "team": "Jordan"}, {"code": "JOR 13", "label": "SQUAD", "team": "Jordan"}, {"code": "JOR 14", "label": "", "team": "Jordan"}, {"code": "JOR 15", "label": "", "team": "Jordan"}, {"code": "JOR 16", "label": "", "team": "Jordan"}, {"code": "JOR 17", "label": "", "team": "Jordan"}, {"code": "JOR 18", "label": "", "team": "Jordan"}, {"code": "JOR 19", "label": "", "team": "Jordan"}, {"code": "JOR 20", "label": "", "team": "Jordan"}]}, {"id": "KSA", "title": "Saudi Arabia", "items": [{"code": "KSA 1", "label": "BADGE", "team": "Saudi Arabia"}, {"code": "KSA 2", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 3", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 4", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 5", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 6", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 7", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 8", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 9", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 10", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 11", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 12", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 13", "label": "SQUAD", "team": "Saudi Arabia"}, {"code": "KSA 14", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 15", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 16", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 17", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 18", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 19", "label": "", "team": "Saudi Arabia"}, {"code": "KSA 20", "label": "", "team": "Saudi Arabia"}]}, {"id": "MAR", "title": "Morocco", "items": [{"code": "MAR 1", "label": "BADGE", "team": "Morocco"}, {"code": "MAR 2", "label": "", "team": "Morocco"}, {"code": "MAR 3", "label": "", "team": "Morocco"}, {"code": "MAR 4", "label": "", "team": "Morocco"}, {"code": "MAR 5", "label": "", "team": "Morocco"}, {"code": "MAR 6", "label": "", "team": "Morocco"}, {"code": "MAR 7", "label": "", "team": "Morocco"}, {"code": "MAR 8", "label": "", "team": "Morocco"}, {"code": "MAR 9", "label": "", "team": "Morocco"}, {"code": "MAR 10", "label": "", "team": "Morocco"}, {"code": "MAR 11", "label": "", "team": "Morocco"}, {"code": "MAR 12", "label": "", "team": "Morocco"}, {"code": "MAR 13", "label": "SQUAD", "team": "Morocco"}, {"code": "MAR 14", "label": "", "team": "Morocco"}, {"code": "MAR 15", "label": "", "team": "Morocco"}, {"code": "MAR 16", "label": "", "team": "Morocco"}, {"code": "MAR 17", "label": "", "team": "Morocco"}, {"code": "MAR 18", "label": "", "team": "Morocco"}, {"code": "MAR 19", "label": "", "team": "Morocco"}, {"code": "MAR 20", "label": "", "team": "Morocco"}]}, {"id": "TUN", "title": "Tunisia", "items": [{"code": "TUN 1", "label": "BADGE", "team": "Tunisia"}, {"code": "TUN 2", "label": "", "team": "Tunisia"}, {"code": "TUN 3", "label": "", "team": "Tunisia"}, {"code": "TUN 4", "label": "", "team": "Tunisia"}, {"code": "TUN 5", "label": "", "team": "Tunisia"}, {"code": "TUN 6", "label": "", "team": "Tunisia"}, {"code": "TUN 7", "label": "", "team": "Tunisia"}, {"code": "TUN 8", "label": "", "team": "Tunisia"}, {"code": "TUN 9", "label": "", "team": "Tunisia"}, {"code": "TUN 10", "label": "", "team": "Tunisia"}, {"code": "TUN 11", "label": "", "team": "Tunisia"}, {"code": "TUN 12", "label": "", "team": "Tunisia"}, {"code": "TUN 13", "label": "SQUAD", "team": "Tunisia"}, {"code": "TUN 14", "label": "", "team": "Tunisia"}, {"code": "TUN 15", "label": "", "team": "Tunisia"}, {"code": "TUN 16", "label": "", "team": "Tunisia"}, {"code": "TUN 17", "label": "", "team": "Tunisia"}, {"code": "TUN 18", "label": "", "team": "Tunisia"}, {"code": "TUN 19", "label": "", "team": "Tunisia"}, {"code": "TUN 20", "label": "", "team": "Tunisia"}]}, {"id": "EGY", "title": "Egypt", "items": [{"code": "EGY 1", "label": "BADGE", "team": "Egypt"}, {"code": "EGY 2", "label": "", "team": "Egypt"}, {"code": "EGY 3", "label": "", "team": "Egypt"}, {"code": "EGY 4", "label": "", "team": "Egypt"}, {"code": "EGY 5", "label": "", "team": "Egypt"}, {"code": "EGY 6", "label": "", "team": "Egypt"}, {"code": "EGY 7", "label": "", "team": "Egypt"}, {"code": "EGY 8", "label": "", "team": "Egypt"}, {"code": "EGY 9", "label": "", "team": "Egypt"}, {"code": "EGY 10", "label": "", "team": "Egypt"}, {"code": "EGY 11", "label": "", "team": "Egypt"}, {"code": "EGY 12", "label": "", "team": "Egypt"}, {"code": "EGY 13", "label": "SQUAD", "team": "Egypt"}, {"code": "EGY 14", "label": "", "team": "Egypt"}, {"code": "EGY 15", "label": "", "team": "Egypt"}, {"code": "EGY 16", "label": "", "team": "Egypt"}, {"code": "EGY 17", "label": "", "team": "Egypt"}, {"code": "EGY 18", "label": "", "team": "Egypt"}, {"code": "EGY 19", "label": "", "team": "Egypt"}, {"code": "EGY 20", "label": "", "team": "Egypt"}]}, {"id": "GHA", "title": "Ghana", "items": [{"code": "GHA 1", "label": "BADGE", "team": "Ghana"}, {"code": "GHA 2", "label": "", "team": "Ghana"}, {"code": "GHA 3", "label": "", "team": "Ghana"}, {"code": "GHA 4", "label": "", "team": "Ghana"}, {"code": "GHA 5", "label": "", "team": "Ghana"}, {"code": "GHA 6", "label": "", "team": "Ghana"}, {"code": "GHA 7", "label": "", "team": "Ghana"}, {"code": "GHA 8", "label": "", "team": "Ghana"}, {"code": "GHA 9", "label": "", "team": "Ghana"}, {"code": "GHA 10", "label": "", "team": "Ghana"}, {"code": "GHA 11", "label": "", "team": "Ghana"}, {"code": "GHA 12", "label": "", "team": "Ghana"}, {"code": "GHA 13", "label": "SQUAD", "team": "Ghana"}, {"code": "GHA 14", "label": "", "team": "Ghana"}, {"code": "GHA 15", "label": "", "team": "Ghana"}, {"code": "GHA 16", "label": "", "team": "Ghana"}, {"code": "GHA 17", "label": "", "team": "Ghana"}, {"code": "GHA 18", "label": "", "team": "Ghana"}, {"code": "GHA 19", "label": "", "team": "Ghana"}, {"code": "GHA 20", "label": "", "team": "Ghana"}]}, {"id": "CIV", "title": "Ivory Coast", "items": [{"code": "CIV 1", "label": "BADGE", "team": "Ivory Coast"}, {"code": "CIV 2", "label": "", "team": "Ivory Coast"}, {"code": "CIV 3", "label": "", "team": "Ivory Coast"}, {"code": "CIV 4", "label": "", "team": "Ivory Coast"}, {"code": "CIV 5", "label": "", "team": "Ivory Coast"}, {"code": "CIV 6", "label": "", "team": "Ivory Coast"}, {"code": "CIV 7", "label": "", "team": "Ivory Coast"}, {"code": "CIV 8", "label": "", "team": "Ivory Coast"}, {"code": "CIV 9", "label": "", "team": "Ivory Coast"}, {"code": "CIV 10", "label": "", "team": "Ivory Coast"}, {"code": "CIV 11", "label": "", "team": "Ivory Coast"}, {"code": "CIV 12", "label": "", "team": "Ivory Coast"}, {"code": "CIV 13", "label": "SQUAD", "team": "Ivory Coast"}, {"code": "CIV 14", "label": "", "team": "Ivory Coast"}, {"code": "CIV 15", "label": "", "team": "Ivory Coast"}, {"code": "CIV 16", "label": "", "team": "Ivory Coast"}, {"code": "CIV 17", "label": "", "team": "Ivory Coast"}, {"code": "CIV 18", "label": "", "team": "Ivory Coast"}, {"code": "CIV 19", "label": "", "team": "Ivory Coast"}, {"code": "CIV 20", "label": "", "team": "Ivory Coast"}]}, {"id": "SEN", "title": "Senegal", "items": [{"code": "SEN 1", "label": "BADGE", "team": "Senegal"}, {"code": "SEN 2", "label": "", "team": "Senegal"}, {"code": "SEN 3", "label": "", "team": "Senegal"}, {"code": "SEN 4", "label": "", "team": "Senegal"}, {"code": "SEN 5", "label": "", "team": "Senegal"}, {"code": "SEN 6", "label": "", "team": "Senegal"}, {"code": "SEN 7", "label": "", "team": "Senegal"}, {"code": "SEN 8", "label": "", "team": "Senegal"}, {"code": "SEN 9", "label": "", "team": "Senegal"}, {"code": "SEN 10", "label": "", "team": "Senegal"}, {"code": "SEN 11", "label": "", "team": "Senegal"}, {"code": "SEN 12", "label": "", "team": "Senegal"}, {"code": "SEN 13", "label": "SQUAD", "team": "Senegal"}, {"code": "SEN 14", "label": "", "team": "Senegal"}, {"code": "SEN 15", "label": "", "team": "Senegal"}, {"code": "SEN 16", "label": "", "team": "Senegal"}, {"code": "SEN 17", "label": "", "team": "Senegal"}, {"code": "SEN 18", "label": "", "team": "Senegal"}, {"code": "SEN 19", "label": "", "team": "Senegal"}, {"code": "SEN 20", "label": "", "team": "Senegal"}]}, {"id": "CPV", "title": "Cape Verde", "items": [{"code": "CPV 1", "label": "BADGE", "team": "Cape Verde"}, {"code": "CPV 2", "label": "", "team": "Cape Verde"}, {"code": "CPV 3", "label": "", "team": "Cape Verde"}, {"code": "CPV 4", "label": "", "team": "Cape Verde"}, {"code": "CPV 5", "label": "", "team": "Cape Verde"}, {"code": "CPV 6", "label": "", "team": "Cape Verde"}, {"code": "CPV 7", "label": "", "team": "Cape Verde"}, {"code": "CPV 8", "label": "", "team": "Cape Verde"}, {"code": "CPV 9", "label": "", "team": "Cape Verde"}, {"code": "CPV 10", "label": "", "team": "Cape Verde"}, {"code": "CPV 11", "label": "", "team": "Cape Verde"}, {"code": "CPV 12", "label": "", "team": "Cape Verde"}, {"code": "CPV 13", "label": "SQUAD", "team": "Cape Verde"}, {"code": "CPV 14", "label": "", "team": "Cape Verde"}, {"code": "CPV 15", "label": "", "team": "Cape Verde"}, {"code": "CPV 16", "label": "", "team": "Cape Verde"}, {"code": "CPV 17", "label": "", "team": "Cape Verde"}, {"code": "CPV 18", "label": "", "team": "Cape Verde"}, {"code": "CPV 19", "label": "", "team": "Cape Verde"}, {"code": "CPV 20", "label": "", "team": "Cape Verde"}]}, {"id": "COD", "title": "Congo DR", "items": [{"code": "COD 1", "label": "BADGE", "team": "Congo DR"}, {"code": "COD 2", "label": "", "team": "Congo DR"}, {"code": "COD 3", "label": "", "team": "Congo DR"}, {"code": "COD 4", "label": "", "team": "Congo DR"}, {"code": "COD 5", "label": "", "team": "Congo DR"}, {"code": "COD 6", "label": "", "team": "Congo DR"}, {"code": "COD 7", "label": "", "team": "Congo DR"}, {"code": "COD 8", "label": "", "team": "Congo DR"}, {"code": "COD 9", "label": "", "team": "Congo DR"}, {"code": "COD 10", "label": "", "team": "Congo DR"}, {"code": "COD 11", "label": "", "team": "Congo DR"}, {"code": "COD 12", "label": "", "team": "Congo DR"}, {"code": "COD 13", "label": "SQUAD", "team": "Congo DR"}, {"code": "COD 14", "label": "", "team": "Congo DR"}, {"code": "COD 15", "label": "", "team": "Congo DR"}, {"code": "COD 16", "label": "", "team": "Congo DR"}, {"code": "COD 17", "label": "", "team": "Congo DR"}, {"code": "COD 18", "label": "", "team": "Congo DR"}, {"code": "COD 19", "label": "", "team": "Congo DR"}, {"code": "COD 20", "label": "", "team": "Congo DR"}]}, {"id": "BEL", "title": "Belgium", "items": [{"code": "BEL 1", "label": "BADGE", "team": "Belgium"}, {"code": "BEL 2", "label": "", "team": "Belgium"}, {"code": "BEL 3", "label": "", "team": "Belgium"}, {"code": "BEL 4", "label": "", "team": "Belgium"}, {"code": "BEL 5", "label": "", "team": "Belgium"}, {"code": "BEL 6", "label": "", "team": "Belgium"}, {"code": "BEL 7", "label": "", "team": "Belgium"}, {"code": "BEL 8", "label": "", "team": "Belgium"}, {"code": "BEL 9", "label": "", "team": "Belgium"}, {"code": "BEL 10", "label": "", "team": "Belgium"}, {"code": "BEL 11", "label": "", "team": "Belgium"}, {"code": "BEL 12", "label": "", "team": "Belgium"}, {"code": "BEL 13", "label": "SQUAD", "team": "Belgium"}, {"code": "BEL 14", "label": "", "team": "Belgium"}, {"code": "BEL 15", "label": "", "team": "Belgium"}, {"code": "BEL 16", "label": "", "team": "Belgium"}, {"code": "BEL 17", "label": "", "team": "Belgium"}, {"code": "BEL 18", "label": "", "team": "Belgium"}, {"code": "BEL 19", "label": "", "team": "Belgium"}, {"code": "BEL 20", "label": "", "team": "Belgium"}]}, {"id": "CRO", "title": "Croatia", "items": [{"code": "CRO 1", "label": "BADGE", "team": "Croatia"}, {"code": "CRO 2", "label": "", "team": "Croatia"}, {"code": "CRO 3", "label": "", "team": "Croatia"}, {"code": "CRO 4", "label": "", "team": "Croatia"}, {"code": "CRO 5", "label": "", "team": "Croatia"}, {"code": "CRO 6", "label": "", "team": "Croatia"}, {"code": "CRO 7", "label": "", "team": "Croatia"}, {"code": "CRO 8", "label": "", "team": "Croatia"}, {"code": "CRO 9", "label": "", "team": "Croatia"}, {"code": "CRO 10", "label": "", "team": "Croatia"}, {"code": "CRO 11", "label": "", "team": "Croatia"}, {"code": "CRO 12", "label": "", "team": "Croatia"}, {"code": "CRO 13", "label": "SQUAD", "team": "Croatia"}, {"code": "CRO 14", "label": "", "team": "Croatia"}, {"code": "CRO 15", "label": "", "team": "Croatia"}, {"code": "CRO 16", "label": "", "team": "Croatia"}, {"code": "CRO 17", "label": "", "team": "Croatia"}, {"code": "CRO 18", "label": "", "team": "Croatia"}, {"code": "CRO 19", "label": "", "team": "Croatia"}, {"code": "CRO 20", "label": "", "team": "Croatia"}]}, {"id": "ENG", "title": "England", "items": [{"code": "ENG 1", "label": "BADGE", "team": "England"}, {"code": "ENG 2", "label": "", "team": "England"}, {"code": "ENG 3", "label": "", "team": "England"}, {"code": "ENG 4", "label": "", "team": "England"}, {"code": "ENG 5", "label": "", "team": "England"}, {"code": "ENG 6", "label": "", "team": "England"}, {"code": "ENG 7", "label": "", "team": "England"}, {"code": "ENG 8", "label": "", "team": "England"}, {"code": "ENG 9", "label": "", "team": "England"}, {"code": "ENG 10", "label": "", "team": "England"}, {"code": "ENG 11", "label": "", "team": "England"}, {"code": "ENG 12", "label": "", "team": "England"}, {"code": "ENG 13", "label": "SQUAD", "team": "England"}, {"code": "ENG 14", "label": "", "team": "England"}, {"code": "ENG 15", "label": "", "team": "England"}, {"code": "ENG 16", "label": "", "team": "England"}, {"code": "ENG 17", "label": "", "team": "England"}, {"code": "ENG 18", "label": "", "team": "England"}, {"code": "ENG 19", "label": "", "team": "England"}, {"code": "ENG 20", "label": "", "team": "England"}]}, {"id": "FRA", "title": "France", "items": [{"code": "FRA 1", "label": "BADGE", "team": "France"}, {"code": "FRA 2", "label": "", "team": "France"}, {"code": "FRA 3", "label": "", "team": "France"}, {"code": "FRA 4", "label": "", "team": "France"}, {"code": "FRA 5", "label": "", "team": "France"}, {"code": "FRA 6", "label": "", "team": "France"}, {"code": "FRA 7", "label": "", "team": "France"}, {"code": "FRA 8", "label": "", "team": "France"}, {"code": "FRA 9", "label": "", "team": "France"}, {"code": "FRA 10", "label": "", "team": "France"}, {"code": "FRA 11", "label": "", "team": "France"}, {"code": "FRA 12", "label": "", "team": "France"}, {"code": "FRA 13", "label": "SQUAD", "team": "France"}, {"code": "FRA 14", "label": "", "team": "France"}, {"code": "FRA 15", "label": "", "team": "France"}, {"code": "FRA 16", "label": "", "team": "France"}, {"code": "FRA 17", "label": "", "team": "France"}, {"code": "FRA 18", "label": "", "team": "France"}, {"code": "FRA 19", "label": "", "team": "France"}, {"code": "FRA 20", "label": "", "team": "France"}]}, {"id": "GER", "title": "Germany", "items": [{"code": "GER 1", "label": "BADGE", "team": "Germany"}, {"code": "GER 2", "label": "", "team": "Germany"}, {"code": "GER 3", "label": "", "team": "Germany"}, {"code": "GER 4", "label": "", "team": "Germany"}, {"code": "GER 5", "label": "", "team": "Germany"}, {"code": "GER 6", "label": "", "team": "Germany"}, {"code": "GER 7", "label": "", "team": "Germany"}, {"code": "GER 8", "label": "", "team": "Germany"}, {"code": "GER 9", "label": "", "team": "Germany"}, {"code": "GER 10", "label": "", "team": "Germany"}, {"code": "GER 11", "label": "", "team": "Germany"}, {"code": "GER 12", "label": "", "team": "Germany"}, {"code": "GER 13", "label": "SQUAD", "team": "Germany"}, {"code": "GER 14", "label": "", "team": "Germany"}, {"code": "GER 15", "label": "", "team": "Germany"}, {"code": "GER 16", "label": "", "team": "Germany"}, {"code": "GER 17", "label": "", "team": "Germany"}, {"code": "GER 18", "label": "", "team": "Germany"}, {"code": "GER 19", "label": "", "team": "Germany"}, {"code": "GER 20", "label": "", "team": "Germany"}]}, {"id": "NED", "title": "Netherlands", "items": [{"code": "NED 1", "label": "BADGE", "team": "Netherlands"}, {"code": "NED 2", "label": "", "team": "Netherlands"}, {"code": "NED 3", "label": "", "team": "Netherlands"}, {"code": "NED 4", "label": "", "team": "Netherlands"}, {"code": "NED 5", "label": "", "team": "Netherlands"}, {"code": "NED 6", "label": "", "team": "Netherlands"}, {"code": "NED 7", "label": "", "team": "Netherlands"}, {"code": "NED 8", "label": "", "team": "Netherlands"}, {"code": "NED 9", "label": "", "team": "Netherlands"}, {"code": "NED 10", "label": "", "team": "Netherlands"}, {"code": "NED 11", "label": "", "team": "Netherlands"}, {"code": "NED 12", "label": "", "team": "Netherlands"}, {"code": "NED 13", "label": "SQUAD", "team": "Netherlands"}, {"code": "NED 14", "label": "", "team": "Netherlands"}, {"code": "NED 15", "label": "", "team": "Netherlands"}, {"code": "NED 16", "label": "", "team": "Netherlands"}, {"code": "NED 17", "label": "", "team": "Netherlands"}, {"code": "NED 18", "label": "", "team": "Netherlands"}, {"code": "NED 19", "label": "", "team": "Netherlands"}, {"code": "NED 20", "label": "", "team": "Netherlands"}]}, {"id": "NOR", "title": "Norway", "items": [{"code": "NOR 1", "label": "BADGE", "team": "Norway"}, {"code": "NOR 2", "label": "", "team": "Norway"}, {"code": "NOR 3", "label": "", "team": "Norway"}, {"code": "NOR 4", "label": "", "team": "Norway"}, {"code": "NOR 5", "label": "", "team": "Norway"}, {"code": "NOR 6", "label": "", "team": "Norway"}, {"code": "NOR 7", "label": "", "team": "Norway"}, {"code": "NOR 8", "label": "", "team": "Norway"}, {"code": "NOR 9", "label": "", "team": "Norway"}, {"code": "NOR 10", "label": "", "team": "Norway"}, {"code": "NOR 11", "label": "", "team": "Norway"}, {"code": "NOR 12", "label": "", "team": "Norway"}, {"code": "NOR 13", "label": "SQUAD", "team": "Norway"}, {"code": "NOR 14", "label": "", "team": "Norway"}, {"code": "NOR 15", "label": "", "team": "Norway"}, {"code": "NOR 16", "label": "", "team": "Norway"}, {"code": "NOR 17", "label": "", "team": "Norway"}, {"code": "NOR 18", "label": "", "team": "Norway"}, {"code": "NOR 19", "label": "", "team": "Norway"}, {"code": "NOR 20", "label": "", "team": "Norway"}]}, {"id": "POR", "title": "Portugal", "items": [{"code": "POR 1", "label": "BADGE", "team": "Portugal"}, {"code": "POR 2", "label": "", "team": "Portugal"}, {"code": "POR 3", "label": "", "team": "Portugal"}, {"code": "POR 4", "label": "", "team": "Portugal"}, {"code": "POR 5", "label": "", "team": "Portugal"}, {"code": "POR 6", "label": "", "team": "Portugal"}, {"code": "POR 7", "label": "", "team": "Portugal"}, {"code": "POR 8", "label": "", "team": "Portugal"}, {"code": "POR 9", "label": "", "team": "Portugal"}, {"code": "POR 10", "label": "", "team": "Portugal"}, {"code": "POR 11", "label": "", "team": "Portugal"}, {"code": "POR 12", "label": "", "team": "Portugal"}, {"code": "POR 13", "label": "SQUAD", "team": "Portugal"}, {"code": "POR 14", "label": "", "team": "Portugal"}, {"code": "POR 15", "label": "", "team": "Portugal"}, {"code": "POR 16", "label": "", "team": "Portugal"}, {"code": "POR 17", "label": "", "team": "Portugal"}, {"code": "POR 18", "label": "", "team": "Portugal"}, {"code": "POR 19", "label": "", "team": "Portugal"}, {"code": "POR 20", "label": "", "team": "Portugal"}]}, {"id": "SCO", "title": "Scotland", "items": [{"code": "SCO 1", "label": "BADGE", "team": "Scotland"}, {"code": "SCO 2", "label": "", "team": "Scotland"}, {"code": "SCO 3", "label": "", "team": "Scotland"}, {"code": "SCO 4", "label": "", "team": "Scotland"}, {"code": "SCO 5", "label": "", "team": "Scotland"}, {"code": "SCO 6", "label": "", "team": "Scotland"}, {"code": "SCO 7", "label": "", "team": "Scotland"}, {"code": "SCO 8", "label": "", "team": "Scotland"}, {"code": "SCO 9", "label": "", "team": "Scotland"}, {"code": "SCO 10", "label": "", "team": "Scotland"}, {"code": "SCO 11", "label": "", "team": "Scotland"}, {"code": "SCO 12", "label": "", "team": "Scotland"}, {"code": "SCO 13", "label": "SQUAD", "team": "Scotland"}, {"code": "SCO 14", "label": "", "team": "Scotland"}, {"code": "SCO 15", "label": "", "team": "Scotland"}, {"code": "SCO 16", "label": "", "team": "Scotland"}, {"code": "SCO 17", "label": "", "team": "Scotland"}, {"code": "SCO 18", "label": "", "team": "Scotland"}, {"code": "SCO 19", "label": "", "team": "Scotland"}, {"code": "SCO 20", "label": "", "team": "Scotland"}]}, {"id": "ESP", "title": "Spain", "items": [{"code": "ESP 1", "label": "BADGE", "team": "Spain"}, {"code": "ESP 2", "label": "", "team": "Spain"}, {"code": "ESP 3", "label": "", "team": "Spain"}, {"code": "ESP 4", "label": "", "team": "Spain"}, {"code": "ESP 5", "label": "", "team": "Spain"}, {"code": "ESP 6", "label": "", "team": "Spain"}, {"code": "ESP 7", "label": "", "team": "Spain"}, {"code": "ESP 8", "label": "", "team": "Spain"}, {"code": "ESP 9", "label": "", "team": "Spain"}, {"code": "ESP 10", "label": "", "team": "Spain"}, {"code": "ESP 11", "label": "", "team": "Spain"}, {"code": "ESP 12", "label": "", "team": "Spain"}, {"code": "ESP 13", "label": "SQUAD", "team": "Spain"}, {"code": "ESP 14", "label": "", "team": "Spain"}, {"code": "ESP 15", "label": "", "team": "Spain"}, {"code": "ESP 16", "label": "", "team": "Spain"}, {"code": "ESP 17", "label": "", "team": "Spain"}, {"code": "ESP 18", "label": "", "team": "Spain"}, {"code": "ESP 19", "label": "", "team": "Spain"}, {"code": "ESP 20", "label": "", "team": "Spain"}]}, {"id": "SWE", "title": "Sweden", "items": [{"code": "SWE 1", "label": "BADGE", "team": "Sweden"}, {"code": "SWE 2", "label": "", "team": "Sweden"}, {"code": "SWE 3", "label": "", "team": "Sweden"}, {"code": "SWE 4", "label": "", "team": "Sweden"}, {"code": "SWE 5", "label": "", "team": "Sweden"}, {"code": "SWE 6", "label": "", "team": "Sweden"}, {"code": "SWE 7", "label": "", "team": "Sweden"}, {"code": "SWE 8", "label": "", "team": "Sweden"}, {"code": "SWE 9", "label": "", "team": "Sweden"}, {"code": "SWE 10", "label": "", "team": "Sweden"}, {"code": "SWE 11", "label": "", "team": "Sweden"}, {"code": "SWE 12", "label": "", "team": "Sweden"}, {"code": "SWE 13", "label": "SQUAD", "team": "Sweden"}, {"code": "SWE 14", "label": "", "team": "Sweden"}, {"code": "SWE 15", "label": "", "team": "Sweden"}, {"code": "SWE 16", "label": "", "team": "Sweden"}, {"code": "SWE 17", "label": "", "team": "Sweden"}, {"code": "SWE 18", "label": "", "team": "Sweden"}, {"code": "SWE 19", "label": "", "team": "Sweden"}, {"code": "SWE 20", "label": "", "team": "Sweden"}]}, {"id": "SUI", "title": "Switzerland", "items": [{"code": "SUI 1", "label": "BADGE", "team": "Switzerland"}, {"code": "SUI 2", "label": "", "team": "Switzerland"}, {"code": "SUI 3", "label": "", "team": "Switzerland"}, {"code": "SUI 4", "label": "", "team": "Switzerland"}, {"code": "SUI 5", "label": "", "team": "Switzerland"}, {"code": "SUI 6", "label": "", "team": "Switzerland"}, {"code": "SUI 7", "label": "", "team": "Switzerland"}, {"code": "SUI 8", "label": "", "team": "Switzerland"}, {"code": "SUI 9", "label": "", "team": "Switzerland"}, {"code": "SUI 10", "label": "", "team": "Switzerland"}, {"code": "SUI 11", "label": "", "team": "Switzerland"}, {"code": "SUI 12", "label": "", "team": "Switzerland"}, {"code": "SUI 13", "label": "SQUAD", "team": "Switzerland"}, {"code": "SUI 14", "label": "", "team": "Switzerland"}, {"code": "SUI 15", "label": "", "team": "Switzerland"}, {"code": "SUI 16", "label": "", "team": "Switzerland"}, {"code": "SUI 17", "label": "", "team": "Switzerland"}, {"code": "SUI 18", "label": "", "team": "Switzerland"}, {"code": "SUI 19", "label": "", "team": "Switzerland"}, {"code": "SUI 20", "label": "", "team": "Switzerland"}]}, {"id": "TUR", "title": "Türkiye", "items": [{"code": "TUR 1", "label": "BADGE", "team": "Türkiye"}, {"code": "TUR 2", "label": "", "team": "Türkiye"}, {"code": "TUR 3", "label": "", "team": "Türkiye"}, {"code": "TUR 4", "label": "", "team": "Türkiye"}, {"code": "TUR 5", "label": "", "team": "Türkiye"}, {"code": "TUR 6", "label": "", "team": "Türkiye"}, {"code": "TUR 7", "label": "", "team": "Türkiye"}, {"code": "TUR 8", "label": "", "team": "Türkiye"}, {"code": "TUR 9", "label": "", "team": "Türkiye"}, {"code": "TUR 10", "label": "", "team": "Türkiye"}, {"code": "TUR 11", "label": "", "team": "Türkiye"}, {"code": "TUR 12", "label": "", "team": "Türkiye"}, {"code": "TUR 13", "label": "SQUAD", "team": "Türkiye"}, {"code": "TUR 14", "label": "", "team": "Türkiye"}, {"code": "TUR 15", "label": "", "team": "Türkiye"}, {"code": "TUR 16", "label": "", "team": "Türkiye"}, {"code": "TUR 17", "label": "", "team": "Türkiye"}, {"code": "TUR 18", "label": "", "team": "Türkiye"}, {"code": "TUR 19", "label": "", "team": "Türkiye"}, {"code": "TUR 20", "label": "", "team": "Türkiye"}]}, {"id": "ARG", "title": "Argentina", "items": [{"code": "ARG 1", "label": "BADGE", "team": "Argentina"}, {"code": "ARG 2", "label": "", "team": "Argentina"}, {"code": "ARG 3", "label": "", "team": "Argentina"}, {"code": "ARG 4", "label": "", "team": "Argentina"}, {"code": "ARG 5", "label": "", "team": "Argentina"}, {"code": "ARG 6", "label": "", "team": "Argentina"}, {"code": "ARG 7", "label": "", "team": "Argentina"}, {"code": "ARG 8", "label": "", "team": "Argentina"}, {"code": "ARG 9", "label": "", "team": "Argentina"}, {"code": "ARG 10", "label": "", "team": "Argentina"}, {"code": "ARG 11", "label": "", "team": "Argentina"}, {"code": "ARG 12", "label": "", "team": "Argentina"}, {"code": "ARG 13", "label": "SQUAD", "team": "Argentina"}, {"code": "ARG 14", "label": "", "team": "Argentina"}, {"code": "ARG 15", "label": "", "team": "Argentina"}, {"code": "ARG 16", "label": "", "team": "Argentina"}, {"code": "ARG 17", "label": "", "team": "Argentina"}, {"code": "ARG 18", "label": "", "team": "Argentina"}, {"code": "ARG 19", "label": "", "team": "Argentina"}, {"code": "ARG 20", "label": "", "team": "Argentina"}]}, {"id": "ALG", "title": "Algeria", "items": [{"code": "ALG 1", "label": "BADGE", "team": "Algeria"}, {"code": "ALG 2", "label": "", "team": "Algeria"}, {"code": "ALG 3", "label": "", "team": "Algeria"}, {"code": "ALG 4", "label": "", "team": "Algeria"}, {"code": "ALG 5", "label": "", "team": "Algeria"}, {"code": "ALG 6", "label": "", "team": "Algeria"}, {"code": "ALG 7", "label": "", "team": "Algeria"}, {"code": "ALG 8", "label": "", "team": "Algeria"}, {"code": "ALG 9", "label": "", "team": "Algeria"}, {"code": "ALG 10", "label": "", "team": "Algeria"}, {"code": "ALG 11", "label": "", "team": "Algeria"}, {"code": "ALG 12", "label": "", "team": "Algeria"}, {"code": "ALG 13", "label": "SQUAD", "team": "Algeria"}, {"code": "ALG 14", "label": "", "team": "Algeria"}, {"code": "ALG 15", "label": "", "team": "Algeria"}, {"code": "ALG 16", "label": "", "team": "Algeria"}, {"code": "ALG 17", "label": "", "team": "Algeria"}, {"code": "ALG 18", "label": "", "team": "Algeria"}, {"code": "ALG 19", "label": "", "team": "Algeria"}, {"code": "ALG 20", "label": "", "team": "Algeria"}]}, {"id": "AUT", "title": "Austria", "items": [{"code": "AUT 1", "label": "BADGE", "team": "Austria"}, {"code": "AUT 2", "label": "", "team": "Austria"}, {"code": "AUT 3", "label": "", "team": "Austria"}, {"code": "AUT 4", "label": "", "team": "Austria"}, {"code": "AUT 5", "label": "", "team": "Austria"}, {"code": "AUT 6", "label": "", "team": "Austria"}, {"code": "AUT 7", "label": "", "team": "Austria"}, {"code": "AUT 8", "label": "", "team": "Austria"}, {"code": "AUT 9", "label": "", "team": "Austria"}, {"code": "AUT 10", "label": "", "team": "Austria"}, {"code": "AUT 11", "label": "", "team": "Austria"}, {"code": "AUT 12", "label": "", "team": "Austria"}, {"code": "AUT 13", "label": "SQUAD", "team": "Austria"}, {"code": "AUT 14", "label": "", "team": "Austria"}, {"code": "AUT 15", "label": "", "team": "Austria"}, {"code": "AUT 16", "label": "", "team": "Austria"}, {"code": "AUT 17", "label": "", "team": "Austria"}, {"code": "AUT 18", "label": "", "team": "Austria"}, {"code": "AUT 19", "label": "", "team": "Austria"}, {"code": "AUT 20", "label": "", "team": "Austria"}]}, {"id": "CUW", "title": "Curaçao", "items": [{"code": "CUW 1", "label": "BADGE", "team": "Curaçao"}, {"code": "CUW 2", "label": "", "team": "Curaçao"}, {"code": "CUW 3", "label": "", "team": "Curaçao"}, {"code": "CUW 4", "label": "", "team": "Curaçao"}, {"code": "CUW 5", "label": "", "team": "Curaçao"}, {"code": "CUW 6", "label": "", "team": "Curaçao"}, {"code": "CUW 7", "label": "", "team": "Curaçao"}, {"code": "CUW 8", "label": "", "team": "Curaçao"}, {"code": "CUW 9", "label": "", "team": "Curaçao"}, {"code": "CUW 10", "label": "", "team": "Curaçao"}, {"code": "CUW 11", "label": "", "team": "Curaçao"}, {"code": "CUW 12", "label": "", "team": "Curaçao"}, {"code": "CUW 13", "label": "SQUAD", "team": "Curaçao"}, {"code": "CUW 14", "label": "", "team": "Curaçao"}, {"code": "CUW 15", "label": "", "team": "Curaçao"}, {"code": "CUW 16", "label": "", "team": "Curaçao"}, {"code": "CUW 17", "label": "", "team": "Curaçao"}, {"code": "CUW 18", "label": "", "team": "Curaçao"}, {"code": "CUW 19", "label": "", "team": "Curaçao"}, {"code": "CUW 20", "label": "", "team": "Curaçao"}]}, {"id": "HAI", "title": "Haiti", "items": [{"code": "HAI 1", "label": "BADGE", "team": "Haiti"}, {"code": "HAI 2", "label": "", "team": "Haiti"}, {"code": "HAI 3", "label": "", "team": "Haiti"}, {"code": "HAI 4", "label": "", "team": "Haiti"}, {"code": "HAI 5", "label": "", "team": "Haiti"}, {"code": "HAI 6", "label": "", "team": "Haiti"}, {"code": "HAI 7", "label": "", "team": "Haiti"}, {"code": "HAI 8", "label": "", "team": "Haiti"}, {"code": "HAI 9", "label": "", "team": "Haiti"}, {"code": "HAI 10", "label": "", "team": "Haiti"}, {"code": "HAI 11", "label": "", "team": "Haiti"}, {"code": "HAI 12", "label": "", "team": "Haiti"}, {"code": "HAI 13", "label": "SQUAD", "team": "Haiti"}, {"code": "HAI 14", "label": "", "team": "Haiti"}, {"code": "HAI 15", "label": "", "team": "Haiti"}, {"code": "HAI 16", "label": "", "team": "Haiti"}, {"code": "HAI 17", "label": "", "team": "Haiti"}, {"code": "HAI 18", "label": "", "team": "Haiti"}, {"code": "HAI 19", "label": "", "team": "Haiti"}, {"code": "HAI 20", "label": "", "team": "Haiti"}]}, {"id": "IRQ", "title": "Iraq", "items": [{"code": "IRQ 1", "label": "BADGE", "team": "Iraq"}, {"code": "IRQ 2", "label": "", "team": "Iraq"}, {"code": "IRQ 3", "label": "", "team": "Iraq"}, {"code": "IRQ 4", "label": "", "team": "Iraq"}, {"code": "IRQ 5", "label": "", "team": "Iraq"}, {"code": "IRQ 6", "label": "", "team": "Iraq"}, {"code": "IRQ 7", "label": "", "team": "Iraq"}, {"code": "IRQ 8", "label": "", "team": "Iraq"}, {"code": "IRQ 9", "label": "", "team": "Iraq"}, {"code": "IRQ 10", "label": "", "team": "Iraq"}, {"code": "IRQ 11", "label": "", "team": "Iraq"}, {"code": "IRQ 12", "label": "", "team": "Iraq"}, {"code": "IRQ 13", "label": "SQUAD", "team": "Iraq"}, {"code": "IRQ 14", "label": "", "team": "Iraq"}, {"code": "IRQ 15", "label": "", "team": "Iraq"}, {"code": "IRQ 16", "label": "", "team": "Iraq"}, {"code": "IRQ 17", "label": "", "team": "Iraq"}, {"code": "IRQ 18", "label": "", "team": "Iraq"}, {"code": "IRQ 19", "label": "", "team": "Iraq"}, {"code": "IRQ 20", "label": "", "team": "Iraq"}]}, {"id": "NZL", "title": "New Zealand", "items": [{"code": "NZL 1", "label": "BADGE", "team": "New Zealand"}, {"code": "NZL 2", "label": "", "team": "New Zealand"}, {"code": "NZL 3", "label": "", "team": "New Zealand"}, {"code": "NZL 4", "label": "", "team": "New Zealand"}, {"code": "NZL 5", "label": "", "team": "New Zealand"}, {"code": "NZL 6", "label": "", "team": "New Zealand"}, {"code": "NZL 7", "label": "", "team": "New Zealand"}, {"code": "NZL 8", "label": "", "team": "New Zealand"}, {"code": "NZL 9", "label": "", "team": "New Zealand"}, {"code": "NZL 10", "label": "", "team": "New Zealand"}, {"code": "NZL 11", "label": "", "team": "New Zealand"}, {"code": "NZL 12", "label": "", "team": "New Zealand"}, {"code": "NZL 13", "label": "SQUAD", "team": "New Zealand"}, {"code": "NZL 14", "label": "", "team": "New Zealand"}, {"code": "NZL 15", "label": "", "team": "New Zealand"}, {"code": "NZL 16", "label": "", "team": "New Zealand"}, {"code": "NZL 17", "label": "", "team": "New Zealand"}, {"code": "NZL 18", "label": "", "team": "New Zealand"}, {"code": "NZL 19", "label": "", "team": "New Zealand"}, {"code": "NZL 20", "label": "", "team": "New Zealand"}]}, {"id": "PAN", "title": "Panama", "items": [{"code": "PAN 1", "label": "BADGE", "team": "Panama"}, {"code": "PAN 2", "label": "", "team": "Panama"}, {"code": "PAN 3", "label": "", "team": "Panama"}, {"code": "PAN 4", "label": "", "team": "Panama"}, {"code": "PAN 5", "label": "", "team": "Panama"}, {"code": "PAN 6", "label": "", "team": "Panama"}, {"code": "PAN 7", "label": "", "team": "Panama"}, {"code": "PAN 8", "label": "", "team": "Panama"}, {"code": "PAN 9", "label": "", "team": "Panama"}, {"code": "PAN 10", "label": "", "team": "Panama"}, {"code": "PAN 11", "label": "", "team": "Panama"}, {"code": "PAN 12", "label": "", "team": "Panama"}, {"code": "PAN 13", "label": "SQUAD", "team": "Panama"}, {"code": "PAN 14", "label": "", "team": "Panama"}, {"code": "PAN 15", "label": "", "team": "Panama"}, {"code": "PAN 16", "label": "", "team": "Panama"}, {"code": "PAN 17", "label": "", "team": "Panama"}, {"code": "PAN 18", "label": "", "team": "Panama"}, {"code": "PAN 19", "label": "", "team": "Panama"}, {"code": "PAN 20", "label": "", "team": "Panama"}]}, {"id": "USA", "title": "USA", "items": [{"code": "USA 1", "label": "BADGE", "team": "USA"}, {"code": "USA 2", "label": "", "team": "USA"}, {"code": "USA 3", "label": "", "team": "USA"}, {"code": "USA 4", "label": "", "team": "USA"}, {"code": "USA 5", "label": "", "team": "USA"}, {"code": "USA 6", "label": "", "team": "USA"}, {"code": "USA 7", "label": "", "team": "USA"}, {"code": "USA 8", "label": "", "team": "USA"}, {"code": "USA 9", "label": "", "team": "USA"}, {"code": "USA 10", "label": "", "team": "USA"}, {"code": "USA 11", "label": "", "team": "USA"}, {"code": "USA 12", "label": "", "team": "USA"}, {"code": "USA 13", "label": "SQUAD", "team": "USA"}, {"code": "USA 14", "label": "", "team": "USA"}, {"code": "USA 15", "label": "", "team": "USA"}, {"code": "USA 16", "label": "", "team": "USA"}, {"code": "USA 17", "label": "", "team": "USA"}, {"code": "USA 18", "label": "", "team": "USA"}, {"code": "USA 19", "label": "", "team": "USA"}, {"code": "USA 20", "label": "", "team": "USA"}]}];
+  const LS_KEY = "panini_tracker_quantities_v7";
+  const OLD_KEY = "panini_tracker_pro_v2";
+  const CATALOG_CODES = CATALOG.flatMap(section => section.items.map(item => item.code));
+  const CATALOG_SET = new Set(CATALOG_CODES);
+  const ITEM_LOOKUP = new Map();
+  CATALOG.forEach(section => section.items.forEach(item => ITEM_LOOKUP.set(item.code, {...item, section: section.title})));
+
   const state = {
-    missing: new Set(),
-    dupes: new Map(),
-    activeTab: "missing",
+    qty: new Map(),
+    extraItems: new Map(),
+    activeTab: "all",
     search: "",
+    imported: false,
     otherMissing: new Set(),
     otherDupes: new Map()
   };
 
-  const $ = (id) => document.getElementById(id);
+  const $ = id => document.getElementById(id);
   const els = {
     appRoot: $("appRoot"),
-    importCard: $("importCard"),
     file: $("file"),
     pickFile: $("pickFile"),
     pickFileTop: $("pickFileTop"),
     drop: $("drop"),
     search: $("search"),
     clearSearch: $("clearSearch"),
+    allList: $("allList"),
     missingList: $("missingList"),
     dupesList: $("dupesList"),
+    statOwned: $("statOwned"),
     statMissing: $("statMissing"),
     statDupes: $("statDupes"),
-    statDupesTotal: $("statDupesTotal"),
     statTrade: $("statTrade"),
-    deviceStatus: $("deviceStatus"),
     newMissing: $("newMissing"),
     newDupe: $("newDupe"),
     addMissing: $("addMissing"),
@@ -1600,6 +699,7 @@
     exportCsv: $("exportCsv"),
     clearAll: $("clearAll"),
     fabNewList: $("fabNewList"),
+    newListTop: $("newListTop"),
     toast: $("toast"),
     summaryRows: $("summaryRows"),
     createBackup: $("createBackup"),
@@ -1607,18 +707,18 @@
     backupFile: $("backupFile")
   };
 
-  const debounce = (fn, wait = 80) => {
+  function debounce(fn, wait=80) {
     let t;
     return (...args) => {
       clearTimeout(t);
       t = setTimeout(() => fn(...args), wait);
     };
-  };
+  }
 
   function toast(msg) {
     els.toast.textContent = msg;
     els.toast.classList.add("show");
-    setTimeout(() => els.toast.classList.remove("show"), 2300);
+    setTimeout(() => els.toast.classList.remove("show"), 2200);
   }
 
   function normalize(value) {
@@ -1640,290 +740,279 @@
       .flatMap(part => {
         const trimmed = part.trim();
         if (!trimmed) return [];
-        const looksLikeManySimple = /^(\d+\s+){2,}\d+$/.test(trimmed);
-        return looksLikeManySimple ? trimmed.split(/\s+/) : [trimmed];
+        const manyNumbers = /^(\d+\s+){2,}\d+$/.test(trimmed);
+        return manyNumbers ? trimmed.split(/\s+/) : [trimmed];
       });
     return raw.map(normalize).filter(Boolean);
   }
 
-  function mapFromList(list) {
-    const map = new Map();
-    for (const code of list) map.set(code, (map.get(code) || 0) + 1);
-    return map;
-  }
-
   function sortedCodes(iterable) {
-    return [...iterable].sort((a, b) => a.localeCompare(b, "es", {numeric:true, sensitivity:"base"}));
+    return [...iterable].sort((a,b) => a.localeCompare(b, "es", {numeric:true, sensitivity:"base"}));
   }
 
-  function filteredCodes(codes) {
+  function getQty(code) {
+    return Math.max(0, Number(state.qty.get(code)) || 0);
+  }
+
+  function setQty(code, qty) {
+    code = normalize(code);
+    if (!code) return;
+    qty = Math.max(0, Number(qty) || 0);
+    if (!CATALOG_SET.has(code) && !state.extraItems.has(code)) {
+      state.extraItems.set(code, {code, label:"", team:"Extra", section:"Extras"});
+    }
+    if (qty <= 0) state.qty.delete(code);
+    else state.qty.set(code, qty);
+  }
+
+  function increment(code) {
+    setQty(code, getQty(code) + 1);
+    state.imported = true;
+    save();
+    render();
+  }
+
+  function decrement(code) {
+    setQty(code, getQty(code) - 1);
+    state.imported = true;
+    save();
+    render();
+  }
+
+  function allItemsSections() {
+    const sections = CATALOG.map(section => ({
+      title: section.title,
+      items: section.items
+    }));
+    if (state.extraItems.size) {
+      sections.push({title:"Extras", items: sortedCodes(state.extraItems.keys()).map(code => state.extraItems.get(code))});
+    }
+    return sections;
+  }
+
+  function itemText(item) {
+    return `${item.code} ${item.label || ""} ${item.team || ""} ${item.section || ""}`.toUpperCase();
+  }
+
+  function filteredItems(items, mode) {
     const q = normalize(state.search);
-    if (!q) return codes;
-    return codes.filter(code => code.includes(q));
+    return items.filter(item => {
+      const qty = getQty(item.code);
+      if (mode === "missing" && qty !== 0) return false;
+      if (mode === "dupes" && qty <= 1) return false;
+      if (q && !itemText(item).includes(q)) return false;
+      return true;
+    });
   }
 
-  function hasData() {
-    return state.missing.size > 0 || state.dupes.size > 0;
+  function statusClass(qty) {
+    if (qty <= 0) return "missing";
+    if (qty === 1) return "owned";
+    return "dupe";
   }
 
-  function updateDataUI() {
-    const active = hasData();
-    els.appRoot.classList.toggle("has-data", active);
-    els.fabNewList.classList.toggle("show", active);
+  function badgeText(qty) {
+    if (qty <= 0) return "";
+    if (qty === 1) return "✓";
+    return "x" + (qty - 1);
+  }
+
+  function renderSticker(item) {
+    const qty = getQty(item.code);
+    const el = document.createElement("article");
+    el.className = `sticker ${statusClass(qty)}`;
+    el.title = `${item.code}${item.label ? " - " + item.label : ""}`;
+    el.innerHTML = `
+      <div class="code">${escapeHtml(item.code)}</div>
+      ${qty > 0 ? `<div class="qty-badge">${badgeText(qty)}</div>` : ""}
+    `;
+
+    let pressTimer = null;
+    let longPressed = false;
+
+    el.addEventListener("pointerdown", () => {
+      longPressed = false;
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        decrement(item.code);
+        toast(`${item.code} -1`);
+      }, 520);
+    });
+
+    ["pointerup", "pointerleave", "pointercancel"].forEach(evt => {
+      el.addEventListener(evt, () => {
+        clearTimeout(pressTimer);
+      });
+    });
+
+    el.addEventListener("click", () => {
+      if (longPressed) return;
+      increment(item.code);
+      const q = getQty(item.code);
+      toast(q === 1 ? `${item.code} al álbum` : `${item.code}: ${q-1} repetida(s)`);
+    });
+
+    return el;
+  }
+
+  function renderSections(container, mode) {
+    container.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    let total = 0;
+
+    for (const section of allItemsSections()) {
+      const items = filteredItems(section.items, mode);
+      if (!items.length) continue;
+      total += items.length;
+
+      const sec = document.createElement("section");
+      sec.className = "section";
+      sec.innerHTML = `
+        <div class="section-head">
+          <h3 class="section-title">${escapeHtml(section.title)}</h3>
+          <span class="section-count">${items.length}</span>
+        </div>
+        <div class="grid"></div>
+      `;
+      const grid = sec.querySelector(".grid");
+      items.forEach(item => grid.appendChild(renderSticker(item)));
+      frag.appendChild(sec);
+    }
+
+    if (!total) {
+      container.innerHTML = `<div class="empty">No hay resultados.</div>`;
+      return;
+    }
+
+    container.appendChild(frag);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  }
+
+  function currentMissingCodes() {
+    const codes = [];
+    for (const item of allItemsSections().flatMap(s => s.items)) {
+      if (getQty(item.code) === 0) codes.push(item.code);
+    }
+    return sortedCodes(codes);
+  }
+
+  function currentDupeCodes(expanded=false) {
+    const result = [];
+    for (const item of allItemsSections().flatMap(s => s.items)) {
+      const dupes = Math.max(0, getQty(item.code) - 1);
+      if (dupes > 0) {
+        if (expanded) {
+          for (let i=0; i<dupes; i++) result.push(item.code);
+        } else {
+          result.push(dupes > 1 ? `${item.code} x${dupes}` : item.code);
+        }
+      }
+    }
+    return sortedCodes(result);
+  }
+
+  function renderStats() {
+    const allItems = allItemsSections().flatMap(s => s.items);
+    const owned = allItems.filter(item => getQty(item.code) >= 1).length;
+    const missing = allItems.filter(item => getQty(item.code) === 0).length;
+    const dupesTotal = allItems.reduce((sum,item) => sum + Math.max(0, getQty(item.code)-1), 0);
+    const tradeIn = intersection([...state.otherDupes.keys()], new Set(currentMissingCodes())).length;
+
+    els.statOwned.textContent = owned;
+    els.statMissing.textContent = missing;
+    els.statDupes.textContent = dupesTotal;
+    els.statTrade.textContent = tradeIn;
+    els.appRoot.classList.toggle("has-import", state.imported);
+  }
+
+  function render() {
+    renderStats();
+    if (state.activeTab === "all") renderSections(els.allList, "all");
+    if (state.activeTab === "missing") renderSections(els.missingList, "missing");
+    if (state.activeTab === "dupes") renderSections(els.dupesList, "dupes");
+    if (state.activeTab === "trade") renderTrade();
+    if (state.activeTab === "edit") syncBulkTextareas();
+    if (state.activeTab === "board") renderSummary();
+  }
+
+  function setTab(tab) {
+    state.activeTab = tab;
+    document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+    document.querySelectorAll(".navitem").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab || (tab === "missing" && btn.dataset.tab === "all") || (tab === "dupes" && btn.dataset.tab === "all")));
+    document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === `view-${tab}`));
+    render();
   }
 
   function save() {
     const payload = {
-      missing: [...state.missing],
-      dupes: [...state.dupes.entries()]
+      version: 7,
+      imported: state.imported,
+      qty: [...state.qty.entries()],
+      extras: [...state.extraItems.entries()]
     };
     localStorage.setItem(LS_KEY, JSON.stringify(payload));
-    updateDataUI();
   }
 
   function load() {
     try {
       const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      state.missing = new Set((data.missing || []).map(normalize).filter(Boolean));
-      state.dupes = new Map((data.dupes || []).map(([k,v]) => [normalize(k), Math.max(1, Number(v) || 1)]).filter(([k]) => k));
+      if (raw) {
+        const data = JSON.parse(raw);
+        state.imported = !!data.imported;
+        state.qty = new Map((data.qty || []).map(([k,v]) => [normalize(k), Math.max(0, Number(v)||0)]).filter(([k]) => k));
+        state.extraItems = new Map((data.extras || []).map(([k,v]) => [normalize(k), v]).filter(([k]) => k));
+        return;
+      }
+
+      const oldRaw = localStorage.getItem(OLD_KEY);
+      if (oldRaw) {
+        const old = JSON.parse(oldRaw);
+        applyImportedLists(old.missing || [], (old.dupes || []).flatMap(([code,qty]) => Array(Math.max(1, Number(qty)||1)).fill(code)));
+        state.imported = true;
+        save();
+      }
     } catch(e) {
       console.warn(e);
       toast("No se pudo leer el guardado anterior.");
     }
   }
 
-  async function createBackupFile() {
-    const payload = {
-      app: "Panini Tracker Pro",
-      version: 3,
-      createdAt: new Date().toISOString(),
-      missing: sortedCodes(state.missing),
-      dupes: sortedCodes(state.dupes.keys()).map(code => [code, state.dupes.get(code) || 1])
-    };
+  function mapFromList(list) {
+    const map = new Map();
+    for (const code of list.map(normalize).filter(Boolean)) {
+      map.set(code, (map.get(code) || 0) + 1);
+    }
+    return map;
+  }
 
-    const prettyDate = new Date().toISOString().slice(0,10);
-    const fileName = `panini-backup-${prettyDate}.json`;
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
-    const file = new File([blob], fileName, {type:"application/json"});
+  function applyImportedLists(missingList, dupeList) {
+    const missingSet = new Set(missingList.map(normalize).filter(Boolean));
+    const dupes = mapFromList(dupeList);
+    state.qty.clear();
 
-    if (navigator.canShare && navigator.canShare({files:[file]})) {
-      try {
-        await navigator.share({
-          title: "Backup Panini Tracker",
-          text: "Respaldo de mi álbum Panini",
-          files: [file]
-        });
-        toast("Backup compartido.");
-        return;
-      } catch(e) {
-        if (e.name === "AbortError") return;
-      }
+    CATALOG_CODES.forEach(code => setQty(code, missingSet.has(code) ? 0 : 1));
+
+    for (const code of missingSet) {
+      if (!CATALOG_SET.has(code)) setQty(code, 0);
     }
 
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-    toast("Backup creado.");
-  }
-
-  function restoreBackupFile(file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = JSON.parse(reader.result);
-        if (!data || !Array.isArray(data.missing) || !Array.isArray(data.dupes)) {
-          toast("Ese archivo no parece ser un backup válido.");
-          return;
-        }
-
-        const ok = confirm("¿Restaurar este backup? Reemplazará la lista actual.");
-        if (!ok) return;
-
-        state.missing = new Set(data.missing.map(normalize).filter(Boolean));
-        state.dupes = new Map(
-          data.dupes
-            .map(([code, qty]) => [normalize(code), Math.max(1, Number(qty) || 1)])
-            .filter(([code]) => code)
-        );
-        save();
-        render();
-        setTab("missing");
-        toast("Backup restaurado.");
-      } catch(e) {
-        console.error(e);
-        toast("No se pudo restaurar el backup.");
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  function exportStateCsv() {
-    const missing = sortedCodes(state.missing);
-    const dupeExpanded = [];
-    for (const code of sortedCodes(state.dupes.keys())) {
-      const qty = state.dupes.get(code) || 1;
-      for (let i = 0; i < qty; i++) dupeExpanded.push(code);
+    for (const [code, count] of dupes.entries()) {
+      setQty(code, Math.max(getQty(code), 1) + count);
     }
-    const max = Math.max(missing.length, dupeExpanded.length);
-    const rows = [["Faltantes", "Repetidas"]];
-    for (let i = 0; i < max; i++) rows.push([missing[i] || "", dupeExpanded[i] || ""]);
-    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob(["\ufeff" + csv], {type:"text/csv;charset=utf-8"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "panini_tracker_export.csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-  }
 
-  function addMissing(code) {
-    code = normalize(code);
-    if (!code) return;
-    state.missing.add(code);
-    save();
-    render();
-  }
-
-  function removeMissing(code) {
-    state.missing.delete(code);
-    save();
-    render();
-  }
-
-  function addDupe(code, qty = 1) {
-    code = normalize(code);
-    if (!code) return;
-    state.dupes.set(code, (state.dupes.get(code) || 0) + qty);
-    save();
-    render();
-  }
-
-  function removeDupe(code, qty = 1) {
-    const current = state.dupes.get(code) || 0;
-    const next = current - qty;
-    if (next <= 0) state.dupes.delete(code);
-    else state.dupes.set(code, next);
-    save();
-    render();
-  }
-
-  function setTab(tab) {
-    state.activeTab = tab;
-    document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
-    document.querySelectorAll(".navitem").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab || (tab === "dupes" && btn.dataset.tab === "missing")));
-    document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === `view-${tab}`));
-    if (tab === "edit") syncBulkTextareas();
-    if (tab === "trade") renderTrade();
-    if (tab === "board") renderSummary();
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-    }[c]));
-  }
-
-  function renderStickerList(container, codes, type) {
-    container.innerHTML = "";
-    const filtered = filteredCodes(codes);
-    if (!filtered.length) {
-      container.innerHTML = `<div class="empty" style="grid-column:1/-1">No hay resultados.</div>`;
-      return;
-    }
-    const frag = document.createDocumentFragment();
-    for (const code of filtered) {
-      const card = document.createElement("article");
-      card.className = "sticker";
-      if (type === "missing") {
-        card.innerHTML = `
-          <div class="code">${escapeHtml(code)}</div>
-          <div class="meta">
-            <button class="btn small done-btn" title="Marcar como conseguida">✓</button>
-          </div>`;
-        card.querySelector("button").addEventListener("click", () => {
-          removeMissing(code);
-          toast(`${code} conseguida.`);
-        });
-      } else {
-        const qty = state.dupes.get(code) || 1;
-        card.innerHTML = `
-          <div class="code">${escapeHtml(code)}</div>
-          <div class="meta">
-            <span class="badge green">x${qty}</span>
-            <span>
-              <button class="btn small" title="Restar una">−</button>
-              <button class="btn small" title="Sumar una">+</button>
-            </span>
-          </div>`;
-        const [minus, plus] = card.querySelectorAll("button");
-        minus.addEventListener("click", () => removeDupe(code));
-        plus.addEventListener("click", () => addDupe(code));
-      }
-      frag.appendChild(card);
-    }
-    container.appendChild(frag);
-  }
-
-  function renderStats() {
-    const dupeTotal = [...state.dupes.values()].reduce((a,b) => a + b, 0);
-    const tradeIn = intersection([...state.otherDupes.keys()], state.missing).length;
-    els.statMissing.textContent = state.missing.size;
-    els.statDupes.textContent = state.dupes.size;
-    els.statDupesTotal.textContent = dupeTotal;
-    els.statTrade.textContent = tradeIn;
-  }
-
-  function render() {
-    const missing = sortedCodes(state.missing);
-    const dupes = sortedCodes(state.dupes.keys());
-    renderStickerList(els.missingList, missing, "missing");
-    renderStickerList(els.dupesList, dupes, "dupe");
-    renderStats();
-    updateDataUI();
-    if (state.activeTab === "edit") syncBulkTextareas();
-    if (state.activeTab === "trade") renderTrade();
-    if (state.activeTab === "board") renderSummary();
-  }
-
-  function syncBulkTextareas() {
-    els.bulkMissing.value = sortedCodes(state.missing).join("\n");
-    const dupeExpanded = [];
-    for (const code of sortedCodes(state.dupes.keys())) {
-      const qty = state.dupes.get(code) || 1;
-      for (let i = 0; i < qty; i++) dupeExpanded.push(code);
-    }
-    els.bulkDupes.value = dupeExpanded.join("\n");
-  }
-
-  function applyBulk(mode) {
-    const missingList = parseList(els.bulkMissing.value);
-    const dupeList = parseList(els.bulkDupes.value);
-
-    if (mode === "replace") {
-      state.missing = new Set(missingList);
-      state.dupes = mapFromList(dupeList);
-      save();
-      render();
-    } else {
-      for (const code of missingList) state.missing.add(code);
-      for (const code of dupeList) state.dupes.set(code, (state.dupes.get(code) || 0) + 1);
-      save();
-      render();
-    }
-    toast(mode === "replace" ? "Listas guardadas." : "Listas sumadas.");
+    state.imported = true;
   }
 
   function readWorkbook(file) {
+    if (!window.XLSX) {
+      toast("Necesitás internet para leer Excel en esta versión.");
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       try {
         const data = new Uint8Array(e.target.result);
         const wb = XLSX.read(data, {type:"array"});
@@ -1948,13 +1037,12 @@
     let missingCol = 0;
     let dupesCol = 1;
     let startRow = 0;
-
-    const missingWords = ["FALTA", "FALTAN", "FALTANTE", "FALTANTES", "NECESITO", "BUSCO", "MISSING"];
-    const dupeWords = ["REPETIDA", "REPETIDAS", "REPETIDOS", "SOBRA", "SOBRAN", "DUPLICADA", "DUPLICADAS", "DUPES"];
+    const missingWords = ["FALTA","FALTAN","FALTANTE","FALTANTES","NECESITO","BUSCO","MISSING"];
+    const dupeWords = ["REPETIDA","REPETIDAS","REPETIDOS","SOBRA","SOBRAN","DUPLICADA","DUPLICADAS","DUPES"];
 
     const looksHeader = first.some(cell => missingWords.some(w => cell.includes(w)) || dupeWords.some(w => cell.includes(w)));
     if (looksHeader) {
-      first.forEach((cell, idx) => {
+      first.forEach((cell,idx) => {
         if (missingWords.some(w => cell.includes(w))) missingCol = idx;
         if (dupeWords.some(w => cell.includes(w))) dupesCol = idx;
       });
@@ -1963,7 +1051,7 @@
 
     const missing = [];
     const dupes = [];
-    for (let i = startRow; i < rows.length; i++) {
+    for (let i=startRow; i<rows.length; i++) {
       const row = rows[i] || [];
       const m = normalize(row[missingCol]);
       const d = normalize(row[dupesCol]);
@@ -1971,16 +1059,124 @@
       if (d) dupes.push(d);
     }
 
-    if (!missing.length && !dupes.length) {
-      toast("No encontré datos.");
-      return;
-    }
+    applyImportedLists(missing, dupes);
+    save();
+    setTab("all");
+    toast(`Importado: ${missing.length} faltantes y ${dupes.length} repetidas.`);
+  }
 
-    state.missing = new Set(missing);
-    state.dupes = mapFromList(dupes);
+  function syncBulkTextareas() {
+    els.bulkMissing.value = currentMissingCodes().join("\n");
+    els.bulkDupes.value = currentDupeCodes(true).join("\n");
+  }
+
+  function applyBulk(mode) {
+    const missing = parseList(els.bulkMissing.value);
+    const dupes = parseList(els.bulkDupes.value);
+    if (mode === "replace") {
+      applyImportedLists(missing, dupes);
+    } else {
+      for (const code of missing) setQty(code, 0);
+      for (const code of dupes) setQty(code, Math.max(getQty(code), 1) + 1);
+      state.imported = true;
+    }
     save();
     render();
-    toast(`Importado: ${state.missing.size} faltantes y ${state.dupes.size} repetidas.`);
+    toast(mode === "replace" ? "Listas guardadas." : "Listas sumadas.");
+  }
+
+  function exportStateCsv() {
+    const missing = currentMissingCodes();
+    const dupes = currentDupeCodes(true);
+    const max = Math.max(missing.length, dupes.length);
+    const rows = [["Faltantes","Repetidas"]];
+    for (let i=0; i<max; i++) rows.push([missing[i] || "", dupes[i] || ""]);
+    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], {type:"text/csv;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "panini_tracker_export.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  async function createBackupFile() {
+    const payload = {
+      app:"Panini Tracker Pro",
+      version:7,
+      createdAt:new Date().toISOString(),
+      qty:[...state.qty.entries()],
+      extras:[...state.extraItems.entries()]
+    };
+    const fileName = `panini-backup-${new Date().toISOString().slice(0,10)}.json`;
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const file = new File([blob], fileName, {type:"application/json"});
+    if (navigator.canShare && navigator.canShare({files:[file]})) {
+      try {
+        await navigator.share({title:"Backup Panini Tracker", text:"Respaldo de mi álbum Panini", files:[file]});
+        toast("Backup compartido.");
+        return;
+      } catch(e) {
+        if (e.name === "AbortError") return;
+      }
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+    toast("Backup creado.");
+  }
+
+  function restoreBackupFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        const ok = confirm("¿Restaurar este backup? Reemplazará la lista actual.");
+        if (!ok) return;
+
+        if (Array.isArray(data.qty)) {
+          state.qty = new Map(data.qty.map(([k,v]) => [normalize(k), Math.max(0, Number(v)||0)]).filter(([k]) => k));
+          state.extraItems = new Map((data.extras || []).map(([k,v]) => [normalize(k), v]).filter(([k]) => k));
+          state.imported = true;
+        } else if (Array.isArray(data.missing) && Array.isArray(data.dupes)) {
+          applyImportedLists(data.missing, data.dupes.flatMap(x => Array.isArray(x) ? Array(Math.max(1, Number(x[1])||1)).fill(x[0]) : [x]));
+        } else {
+          toast("Ese archivo no parece ser un backup válido.");
+          return;
+        }
+        save();
+        setTab("all");
+        toast("Backup restaurado.");
+      } catch(e) {
+        console.error(e);
+        toast("No se pudo restaurar el backup.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function addMissingCode(code) {
+    code = normalize(code);
+    if (!code) return;
+    setQty(code, 0);
+    state.imported = true;
+    save();
+    render();
+  }
+
+  function addDupeCode(code) {
+    code = normalize(code);
+    if (!code) return;
+    setQty(code, Math.max(getQty(code), 1) + 1);
+    state.imported = true;
+    save();
+    render();
   }
 
   function intersection(list, setLike) {
@@ -1995,39 +1191,37 @@
 
   function renderTrade() {
     updateOtherListsFromTextarea();
-    const iCanGive = intersection([...state.dupes.keys()], state.otherMissing);
-    const theyCanGive = intersection([...state.otherDupes.keys()], state.missing);
+    const myDupes = new Set(currentDupeCodes(true));
+    const myMissing = new Set(currentMissingCodes());
+    const iCanGive = intersection([...myDupes], state.otherMissing);
+    const theyCanGive = intersection([...state.otherDupes.keys()], myMissing);
     const score = Math.min(iCanGive.length, theyCanGive.length);
     els.statTrade.textContent = theyCanGive.length;
 
-    const box = (title, codes, cls, emptyText) => `
+    const box = (title, codes, empty) => `
       <div class="match">
-        <h3>${title} <span class="badge ${cls}">${codes.length}</span></h3>
-        ${codes.length ? `<div class="chips">${codes.map(c => `<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>` : `<p>${emptyText}</p>`}
+        <h3>${title} <span class="qty-badge" style="position:static;display:inline-flex">${codes.length}</span></h3>
+        ${codes.length ? `<div class="chips">${codes.map(c => `<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>` : `<p>${empty}</p>`}
       </div>
     `;
 
     els.tradeResults.innerHTML = `
-      ${box("Vos le podés dar", iCanGive, "blue", "Sin match.")}
-      ${box("La otra persona te puede dar", theyCanGive, "green", "Sin match.")}
+      ${box("Vos le podés dar", iCanGive, "Sin match.")}
+      ${box("La otra persona te puede dar", theyCanGive, "Sin match.")}
       <div class="match" style="grid-column:1/-1">
-        <h3>Resultado <span class="badge ${score ? "green" : "red"}">${score ? "ok" : "sin match"}</span></h3>
-        <p>${score
-            ? `Vos tenés ${iCanGive.length} que le sirven y la otra persona tiene ${theyCanGive.length} que te sirven.`
-            : "No aparece un intercambio directo con las listas pegadas."}
-        </p>
+        <h3>Resultado</h3>
+        <p>${score ? `Hay base para cambio: vos tenés ${iCanGive.length} que le sirven y la otra persona tiene ${theyCanGive.length} que te sirven.` : "No aparece un intercambio directo."}</p>
       </div>
     `;
   }
 
   function buildTradeMessage() {
     updateOtherListsFromTextarea();
-    const iCanGive = intersection([...state.dupes.keys()], state.otherMissing);
-    const theyCanGive = intersection([...state.otherDupes.keys()], state.missing);
-
-    if (!iCanGive.length && !theyCanGive.length) {
-      return "Por ahora no encontré un intercambio directo.";
-    }
+    const myDupes = new Set(currentDupeCodes(true));
+    const myMissing = new Set(currentMissingCodes());
+    const iCanGive = intersection([...myDupes], state.otherMissing);
+    const theyCanGive = intersection([...state.otherDupes.keys()], myMissing);
+    if (!iCanGive.length && !theyCanGive.length) return "Por ahora no encontré un intercambio directo.";
     return [
       "¡Tengo propuesta de intercambio Panini!",
       "",
@@ -2039,19 +1233,22 @@
   }
 
   function renderSummary() {
-    const missing = state.missing.size;
-    const dupeDistinct = state.dupes.size;
-    const dupeTotal = [...state.dupes.values()].reduce((a,b)=>a+b,0);
-    const overlap = intersection([...state.dupes.keys()], state.missing);
-    const topDupes = sortedCodes([...state.dupes.entries()].filter(([_,qty]) => qty > 1).map(([code]) => code)).slice(0,8);
+    const allItems = allItemsSections().flatMap(s => s.items);
+    const total = allItems.length;
+    const owned = allItems.filter(item => getQty(item.code) >= 1).length;
+    const missing = total - owned;
+    const dupeDistinct = allItems.filter(item => getQty(item.code) > 1).length;
+    const dupeTotal = allItems.reduce((sum,item) => sum + Math.max(0, getQty(item.code)-1), 0);
+    const pct = total ? Math.round((owned / total) * 100) : 0;
 
     const rows = [
-      ["Faltantes", missing, "Lo que te falta conseguir"],
-      ["Repetidas", dupeDistinct, "Códigos listos para intercambio"],
-      ["Total repetidas", dupeTotal, "Cantidad física"],
-      ["Solapadas", overlap.length, "Si aparece aquí, conviene revisar"],
-      ["Repetidas fuertes", topDupes.length ? topDupes.join(", ") : "—", "Buenas para intercambio"]
+      ["Catálogo base", total, "Estampitas del álbum principal"],
+      ["En álbum", owned, `${pct}% completado`],
+      ["Faltantes", missing, "Cantidad con valor 0"],
+      ["Repetidas distintas", dupeDistinct, "Códigos con cantidad 2 o más"],
+      ["Repetidas totales", dupeTotal, "Cantidad física para cambiar"]
     ];
+
     els.summaryRows.innerHTML = rows.map(row => `
       <tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td></tr>
     `).join("");
@@ -2072,28 +1269,24 @@
     }
   }
 
-  function clearAllData(ask = true) {
-    if (ask) {
-      const ok = confirm("¿Seguro que querés empezar una nueva lista? Se borrarán los datos actuales.");
-      if (!ok) return;
-    }
-    state.missing.clear();
-    state.dupes.clear();
+  function clearAllData() {
+    const ok = confirm("¿Seguro que querés empezar una nueva lista? Todo quedará como faltante.");
+    if (!ok) return;
+    state.qty.clear();
+    state.extraItems.clear();
+    state.imported = false;
     state.otherMissing.clear();
     state.otherDupes.clear();
     els.otherMissing.value = "";
     els.otherDupes.value = "";
-    els.bulkMissing.value = "";
-    els.bulkDupes.value = "";
     localStorage.removeItem(LS_KEY);
-    render();
-    setTab("missing");
+    setTab("all");
     toast("Nueva lista lista para usar.");
   }
 
   els.pickFile.addEventListener("click", () => els.file.click());
   els.pickFileTop.addEventListener("click", () => els.file.click());
-  els.file.addEventListener("change", (e) => {
+  els.file.addEventListener("change", e => {
     const file = e.target.files?.[0];
     if (file) readWorkbook(file);
     els.file.value = "";
@@ -2122,40 +1315,27 @@
   els.search.addEventListener("input", debounce(() => {
     state.search = els.search.value;
     render();
-  }, 60));
+  }, 80));
+
   els.clearSearch.addEventListener("click", () => {
     els.search.value = "";
     state.search = "";
     render();
-    els.search.focus();
   });
 
   els.addMissing.addEventListener("click", () => {
-    addMissing(els.newMissing.value);
+    addMissingCode(els.newMissing.value);
     els.newMissing.value = "";
-    els.newMissing.focus();
   });
   els.addDupe.addEventListener("click", () => {
-    addDupe(els.newDupe.value);
+    addDupeCode(els.newDupe.value);
     els.newDupe.value = "";
-    els.newDupe.focus();
   });
-  els.newMissing.addEventListener("keydown", e => {
-    if (e.key === "Enter") els.addMissing.click();
-  });
-  els.newDupe.addEventListener("keydown", e => {
-    if (e.key === "Enter") els.addDupe.click();
-  });
+  els.newMissing.addEventListener("keydown", e => { if (e.key === "Enter") els.addMissing.click(); });
+  els.newDupe.addEventListener("keydown", e => { if (e.key === "Enter") els.addDupe.click(); });
 
-  els.copyMissing.addEventListener("click", () => copyText(sortedCodes(state.missing).join(", "), "Faltantes copiados."));
-  els.copyDupes.addEventListener("click", () => {
-    const arr = [];
-    for (const code of sortedCodes(state.dupes.keys())) {
-      const qty = state.dupes.get(code) || 1;
-      arr.push(qty > 1 ? `${code} x${qty}` : code);
-    }
-    copyText(arr.join(", "), "Repetidas copiadas.");
-  });
+  els.copyMissing.addEventListener("click", () => copyText(currentMissingCodes().join(", "), "Faltantes copiados."));
+  els.copyDupes.addEventListener("click", () => copyText(currentDupeCodes(false).join(", "), "Repetidas copiadas."));
 
   els.saveBulk.addEventListener("click", () => applyBulk("replace"));
   els.mergeBulk.addEventListener("click", () => applyBulk("merge"));
@@ -2173,26 +1353,13 @@
   });
 
   els.exportCsv.addEventListener("click", exportStateCsv);
-  els.clearAll.addEventListener("click", () => clearAllData(true));
-  els.fabNewList.addEventListener("click", () => clearAllData(true));
-
-  window.addEventListener("keydown", (e) => {
-    const tag = document.activeElement?.tagName?.toLowerCase();
-    const typing = ["input","textarea"].includes(tag);
-    if (e.key === "/" && !typing) {
-      e.preventDefault();
-      els.search.focus();
-    }
-    if (typing) return;
-    const key = e.key.toLowerCase();
-    if (key === "f") setTab("missing");
-    if (key === "r") setTab("dupes");
-    if (key === "i") setTab("trade");
-  });
+  els.clearAll.addEventListener("click", clearAllData);
+  els.fabNewList.addEventListener("click", clearAllData);
+  els.newListTop.addEventListener("click", clearAllData);
 
   els.createBackup.addEventListener("click", createBackupFile);
   els.restoreBackup.addEventListener("click", () => els.backupFile.click());
-  els.backupFile.addEventListener("change", (e) => {
+  els.backupFile.addEventListener("change", e => {
     const file = e.target.files?.[0];
     if (file) restoreBackupFile(file);
     els.backupFile.value = "";
@@ -2200,7 +1367,6 @@
 
   load();
   render();
-  els.deviceStatus.textContent = "guardado local";
 })();
 </script>
 </body>
