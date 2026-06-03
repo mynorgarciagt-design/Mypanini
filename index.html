@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Panini Tracker Pro</title>
+  <title>Panini Tracker Pro v9</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -304,17 +304,19 @@
       z-index:2;
       top:-5px;
       right:-5px;
-      min-width:26px;
-      height:26px;
-      padding:0 7px;
-      border-radius:999px;
+      width:30px;
+      height:30px;
+      border-radius:50%;
       background:var(--blue);
       color:#fff;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:13px;
+      padding:0;
+      font-size:12px;
+      line-height:1;
       font-weight:950;
+      aspect-ratio:1 / 1;
       box-shadow:0 4px 10px rgba(37,99,235,.22);
     }
     .tap-hint{
@@ -475,7 +477,7 @@
       .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:15px 9px}
       .sticker{min-height:69px}
       .code{font-size:17px;max-width:56px}
-      .qty-badge{min-width:23px;height:23px;font-size:12px;top:-4px;right:-4px}
+      .qty-badge{width:26px;height:26px;font-size:11px;top:-4px;right:-4px;padding:0}
       .twoareas,.matchbox{grid-template-columns:1fr}
       .btnrow{display:grid;grid-template-columns:1fr}
       .btnrow .btn{width:100%}
@@ -539,7 +541,7 @@
     <section id="view-all" class="view active">
       <div class="panel">
         <h2>Todas</h2>
-        <p class="tap-hint">Tocá una estampita para sumar cantidad. Mantener presionado resta. 0 = falta, 1 = álbum, 2+ = repetida. Las repetidas muestran un ícono azul con +cantidad.</p>
+        <p class="tap-hint">Tocá una estampita para sumar cantidad. Mantener presionado resta. 0 = falta, 1 = álbum, 2+ = repetida. Si está repetida, aparece un círculo azul con +1, +2, +3, etc.</p>
       </div>
       <div id="allList"></div>
     </section>
@@ -812,9 +814,8 @@
   }
 
   function badgeText(qty) {
-    if (qty <= 0) return "";
-    if (qty === 1) return "✓";
-    return "x" + (qty - 1);
+    if (qty <= 1) return "";
+    return "+" + (qty - 1);
   }
 
   function renderSticker(item) {
@@ -824,7 +825,7 @@
     el.title = `${item.code}${item.label ? " - " + item.label : ""}`;
     el.innerHTML = `
       <div class="code">${escapeHtml(item.code)}</div>
-      ${qty > 0 ? `<div class="qty-badge">${badgeText(qty)}</div>` : ""}
+      ${qty > 1 ? `<div class="qty-badge">${badgeText(qty)}</div>` : ""}
     `;
 
     let pressTimer = null;
@@ -1200,7 +1201,7 @@
 
     const box = (title, codes, empty) => `
       <div class="match">
-        <h3>${title} <span class="qty-badge" style="position:static;display:inline-flex">${codes.length}</span></h3>
+        <h3>${title} <span class="qty-badge" style="position:static;display:inline-flex;vertical-align:middle;transform:translateY(-1px)">${codes.length}</span></h3>
         ${codes.length ? `<div class="chips">${codes.map(c => `<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>` : `<p>${empty}</p>`}
       </div>
     `;
