@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Panini Tracker Pro - Single HTML</title>
+  <title>Panini Tracker Pro - Solid UI</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root{
@@ -26,17 +26,14 @@
     body{
       margin:0;
       font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(circle at 15% 0%, rgba(124,219,255,.18), transparent 28%),
-        radial-gradient(circle at 85% 5%, rgba(156,255,177,.12), transparent 30%),
-        var(--bg);
+      background:var(--bg);
       color:var(--text);
     }
     button,input,textarea,select{font:inherit}
     button{border:0;color:inherit;background:transparent;cursor:pointer}
     .app{max-width:1180px;margin:0 auto;padding:18px 18px calc(88px + var(--safe-bottom))}
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      background:rgba(255,255,255,.045);
       border:1px solid var(--line);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
@@ -63,7 +60,8 @@
       position:absolute;
       right:-90px; top:-110px;
       width:260px;height:260px;
-      background:radial-gradient(circle, rgba(124,219,255,.25), transparent 65%);
+      display:none;
+      background:transparent;
       pointer-events:none;
     }
     .titleline{
@@ -156,7 +154,7 @@
     }
     .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
     .btn.primary{
-      background:linear-gradient(135deg, rgba(124,219,255,.32), rgba(156,255,177,.22));
+      background:rgba(124,219,255,.20);
       border-color:rgba(124,219,255,.38);
     }
     .btn.danger{background:rgba(255,124,156,.12);border-color:rgba(255,124,156,.25)}
@@ -231,7 +229,7 @@
     }
     .tab.active{
       color:var(--bg);
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      background:var(--accent);
       border-color:transparent;
     }
     .view{display:none}
@@ -405,7 +403,7 @@
       font-size:32px;
       font-weight:400;
       color:#09111d;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      background:var(--accent);
       box-shadow:0 18px 45px rgba(0,0,0,.35);
       z-index:55;
     }
@@ -468,10 +466,7 @@
         --shadow:0 18px 50px rgba(35,50,90,.14);
       }
       body{
-        background:
-          radial-gradient(circle at 15% 0%, rgba(124,219,255,.28), transparent 28%),
-          radial-gradient(circle at 85% 5%, rgba(156,255,177,.22), transparent 30%),
-          var(--bg)
+        background:var(--bg)
       }
       .controls{background:rgba(243,246,255,.78)}
       textarea,.inputline input{background:rgba(255,255,255,.85)}
