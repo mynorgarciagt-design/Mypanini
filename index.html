@@ -1100,6 +1100,282 @@
     }
   </style>
 
+
+  <style id="mobile-fix-v6">
+    /* Corrección v6: tabs compactas y estampitas limpias en celular */
+    .tabs{
+      display:grid!important;
+      grid-template-columns:repeat(5, 1fr)!important;
+      gap:0!important;
+      width:100%!important;
+      overflow:visible!important;
+      padding:6px 0 0!important;
+      border-bottom:1px solid var(--line)!important;
+    }
+
+    .tab{
+      min-width:0!important;
+      width:100%!important;
+      text-align:center!important;
+      padding:9px 4px 13px!important;
+      font-size:clamp(13px, 3.7vw, 18px)!important;
+      letter-spacing:-.02em!important;
+      font-weight:950!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+
+    .tab[data-tab="trade"],
+    .tab[data-tab="edit"],
+    .tab[data-tab="board"]{
+      font-size:clamp(12px, 3.4vw, 17px)!important;
+    }
+
+    .tab.active:after{
+      height:4px!important;
+      left:12%!important;
+      right:12%!important;
+    }
+
+    .controls{
+      grid-template-columns:1fr!important;
+      gap:8px!important;
+      padding-top:10px!important;
+    }
+
+    .sort-icon{
+      display:none!important;
+    }
+
+    .search{
+      min-height:56px!important;
+      border-radius:22px!important;
+      padding:0 14px!important;
+    }
+
+    .search::before{
+      font-size:28px!important;
+      margin-right:0!important;
+    }
+
+    .search input{
+      font-size:21px!important;
+    }
+
+    .row{
+      grid-template-columns:1fr!important;
+      gap:0!important;
+    }
+
+    .row .panel{
+      padding:10px 0!important;
+    }
+
+    .row .panel h2{
+      font-size:clamp(28px, 8vw, 36px)!important;
+      margin-bottom:10px!important;
+    }
+
+    .inputline{
+      grid-template-columns:1fr auto!important;
+      gap:8px!important;
+      margin-bottom:8px!important;
+    }
+
+    .inputline input{
+      min-height:50px!important;
+      border-radius:18px!important;
+      font-size:17px!important;
+    }
+
+    .action-row,
+    .panel .btn[id^="copy"]{
+      margin-top:0!important;
+    }
+
+    .grid{
+      grid-template-columns:repeat(auto-fill, minmax(76px, 1fr))!important;
+      gap:16px 12px!important;
+      padding-top:10px!important;
+    }
+
+    .sticker{
+      min-height:76px!important;
+      padding:4px!important;
+    }
+
+    .sticker::before{
+      inset:2px!important;
+    }
+
+    .code{
+      font-size:clamp(16px, 5vw, 22px)!important;
+      max-width:68px!important;
+      line-height:.95!important;
+    }
+
+    .meta{
+      top:-5px!important;
+      right:-5px!important;
+    }
+
+    .sticker .btn.small,
+    .sticker .done-btn{
+      width:28px!important;
+      min-width:28px!important;
+      height:28px!important;
+      min-height:28px!important;
+      padding:0!important;
+      font-size:17px!important;
+      line-height:1!important;
+      border-radius:999px!important;
+    }
+
+    .badge{
+      width:28px!important;
+      min-width:28px!important;
+      height:28px!important;
+      min-height:28px!important;
+      padding:0!important;
+      font-size:14px!important;
+      line-height:1!important;
+      border-radius:999px!important;
+    }
+
+    #dupesList .meta{
+      top:-7px!important;
+      right:-8px!important;
+      gap:2px!important;
+    }
+
+    #dupesList .meta span:last-child{
+      display:flex!important;
+      gap:2px!important;
+    }
+
+    #dupesList .sticker .btn.small{
+      width:24px!important;
+      min-width:24px!important;
+      height:24px!important;
+      min-height:24px!important;
+      font-size:16px!important;
+    }
+
+    #dupesList .badge{
+      width:26px!important;
+      min-width:26px!important;
+      height:26px!important;
+      min-height:26px!important;
+      font-size:13px!important;
+    }
+
+    .fab{
+      width:56px!important;
+      height:56px!important;
+      font-size:34px!important;
+      right:18px!important;
+      bottom:calc(86px + var(--safe-bottom))!important;
+    }
+
+    .bottomnav{
+      grid-template-columns:repeat(4,1fr)!important;
+      padding:7px 8px calc(7px + var(--safe-bottom))!important;
+    }
+
+    .navitem{
+      min-height:56px!important;
+      gap:3px!important;
+      font-size:11px!important;
+    }
+
+    .navitem span{
+      font-size:23px!important;
+    }
+
+    .navitem strong{
+      font-size:11px!important;
+    }
+
+    @media (max-width:430px){
+      .app{
+        padding-left:16px!important;
+        padding-right:16px!important;
+      }
+
+      h1{
+        font-size:34px!important;
+      }
+
+      .top-upload{
+        width:44px!important;
+        height:44px!important;
+      }
+
+      .tabs{
+        margin-left:-4px!important;
+        margin-right:-4px!important;
+        width:calc(100% + 8px)!important;
+      }
+
+      .tab{
+        font-size:12px!important;
+        padding-left:2px!important;
+        padding-right:2px!important;
+      }
+
+      .tab[data-tab="trade"],
+      .tab[data-tab="edit"],
+      .tab[data-tab="board"]{
+        font-size:11px!important;
+      }
+
+      .grid{
+        grid-template-columns:repeat(4, minmax(0, 1fr))!important;
+        gap:15px 10px!important;
+      }
+
+      .sticker{
+        min-height:70px!important;
+      }
+
+      .code{
+        font-size:18px!important;
+        max-width:56px!important;
+      }
+
+      .sticker .btn.small,
+      .sticker .done-btn{
+        width:25px!important;
+        min-width:25px!important;
+        height:25px!important;
+        min-height:25px!important;
+        font-size:15px!important;
+      }
+    }
+
+    @media (min-width:761px){
+      .tabs{
+        grid-template-columns:repeat(5, max-content)!important;
+        gap:28px!important;
+        justify-content:start!important;
+      }
+
+      .tab{
+        width:auto!important;
+        font-size:20px!important;
+        text-align:left!important;
+      }
+
+      .controls{
+        grid-template-columns:1fr!important;
+      }
+
+      .grid{
+        grid-template-columns:repeat(auto-fill, minmax(92px, 1fr))!important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <main class="app" id="appRoot">
@@ -1151,8 +1427,8 @@
         <button class="btn small ghost" id="clearSearch">✕</button>
       </div>
       <nav class="tabs" aria-label="Vistas">
-        <button class="tab active" data-tab="missing">Me faltan</button>
-        <button class="tab" data-tab="dupes">Repetidas</button>
+        <button class="tab active" data-tab="missing">Faltan</button>
+        <button class="tab" data-tab="dupes">Sobran</button>
         <button class="tab" data-tab="trade">Cambiar</button>
         <button class="tab" data-tab="edit">Cargar</button>
         <button class="tab" data-tab="board">Resumen</button>
@@ -1570,8 +1846,7 @@
         card.innerHTML = `
           <div class="code">${escapeHtml(code)}</div>
           <div class="meta">
-            <span class="badge red">Falta</span>
-            <button class="btn small" title="Marcar como conseguida">✓</button>
+            <button class="btn small done-btn" title="Marcar como conseguida">✓</button>
           </div>`;
         card.querySelector("button").addEventListener("click", () => {
           removeMissing(code);
